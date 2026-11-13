@@ -1,0 +1,121 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
+jobs:
+  build:
+    name: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      CI: "true"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Cache source asset packs
+        uses: actions/cache@v4
+        with:
+          path: .cache/asset-src
+          key: asset-src-${{ hashFiles('scripts/fetch-assets.ts') }}
+
+      - name: Fetch, build and export assets
+        run: npm run assets
+
+      - name: Lint and typecheck
+        run: npm run lint
+
+      - name: Unit tests (Vitest)
+        run: npm test
+
+      - name: Build app
+        run: npm run build
+
+      - name: Playwright smoke test (Linux, xvfb)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a npx playwright test
+
+      - name: Playwright smoke test
+        if: runner.os != 'Linux'
+        run: npx playwright test
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-${{ matrix.os }}
+          path: test-results/
+          if-no-files-found: ignore
+
+      - name: Decide signing
+        id: sign
+        shell: bash
+        env:
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          extra=""
+          if [ "$RUNNER_OS" = "macOS" ]; then
+            if [ -z "$CSC_LINK" ]; then echo "CSC_IDENTITY_AUTO_DISCOVERY=false" >> "$GITHUB_ENV"; echo "::notice::macOS build is unsigned (no CSC_LINK secret)."; fi
+            if [ -n "$CSC_LINK" ] && [ -n "$APPLE_ID" ] && [ -n "$APPLE_APP_SPECIFIC_PASSWORD" ] && [ -n "$APPLE_TEAM_ID" ]; then extra="-c.mac.notarize=true"; else echo "::notice::macOS build is not notarized."; fi
+          fi
+          if [ "$RUNNER_OS" = "Windows" ] && [ -z "$WIN_CSC_LINK" ] && [ -z "$CSC_LINK" ]; then echo "::notice::Windows build is unsigned (no WIN_CSC_LINK secret)."; fi
+          echo "extra=$extra" >> "$GITHUB_OUTPUT"
+
+      - name: Package installers
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+          WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
+          WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then publish=always; else publish=never; fi
+          npx electron-builder --publish "$publish" ${{ steps.sign.outputs.extra }}
+
+      - name: Report installer sizes
+        shell: bash
+        run: ls -la release | grep -Ei '\.(exe|dmg|zip|AppImage|deb|gz)$' | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload installers
+        uses: actions/upload-artifact@v4
+        with:
+          name: installers-${{ matrix.os }}
+          path: |
+            release/*.exe
+            release/*.dmg
+            release/*.zip
+            release/*.AppImage
+            release/*.deb
+            release/*.tar.gz
+            release/latest*.yml
+          if-no-files-found: error

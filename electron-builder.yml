@@ -1,0 +1,69 @@
+appId: com.rollforruin.game
+productName: Roll for Ruin
+copyright: Roll for Ruin contributors. Third-party assets per CREDITS.md.
+directories:
+  output: release
+  buildResources: build
+files:
+  - dist/**/*
+  - dist-electron/**/*
+  - CREDITS.md
+  - LICENSES/**/*
+  - package.json
+  - "!**/*.map"
+extraResources:
+  - from: CREDITS.md
+    to: CREDITS.md
+  - from: LICENSES
+    to: LICENSES
+asarUnpack:
+  - "**/node_modules/steamworks.js/**"
+artifactName: "RollForRuin-${version}-${os}-${arch}.${ext}"
+publish:
+  - provider: github
+    owner: DroDigital
+    repo: random-dnd-game-2
+    releaseType: release
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+    - target: portable
+      arch: [x64]
+  icon: build/icon.png
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  artifactName: "RollForRuin-${version}-win-setup.${ext}"
+portable:
+  artifactName: "RollForRuin-${version}-win-portable.${ext}"
+mac:
+  target:
+    - target: dmg
+      arch: [universal]
+    - target: zip
+      arch: [universal]
+  category: public.app-category.games
+  icon: build/icon.png
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
+  notarize: false
+dmg:
+  artifactName: "RollForRuin-${version}-mac-universal.${ext}"
+linux:
+  target:
+    - target: AppImage
+      arch: [x64]
+    - target: deb
+      arch: [x64]
+    - target: tar.gz
+      arch: [x64]
+  category: Game
+  syncDesktopName: true
+  icon: build/icon.png
+  maintainer: Roll for Ruin contributors <noreply@rollforruin.invalid>
+  synopsis: Tabletop-fantasy action roguelite for 1-4 local co-op players
+deb:
+  depends: ["libgtk-3-0", "libnotify4", "libnss3", "libxss1", "libxtst6", "xdg-utils", "libatspi2.0-0", "libuuid1", "libsecret-1-0"]

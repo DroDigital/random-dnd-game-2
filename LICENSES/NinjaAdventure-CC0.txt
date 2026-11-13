@@ -1,0 +1,9 @@
+Ninja Adventure asset pack — by Pixel-Boy and AAA (pixel-boy on GitHub/itch.io)
+Source used: https://github.com/pixel-boy/NinjaAdventure (commit 6ac78232d5aedcc85ce5f27d060ea92366f7c24a)
+
+License: Creative Commons Zero v1.0 Universal (CC0 1.0)
+https://creativecommons.org/publicdomain/zero/1.0/
+
+The repository itself ships no LICENSE file; the pack is published as CC0 on the
+author's itch.io page (https://pixel-boy.itch.io/ninja-adventure-asset-pack).
+Credit is not required; we give it anyway.
