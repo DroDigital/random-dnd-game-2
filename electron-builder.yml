@@ -50,6 +50,8 @@ mac:
   entitlements: build/entitlements.mac.plist
   entitlementsInherit: build/entitlements.mac.plist
   notarize: false
+  # steamworks.js ships separate prebuilt binaries per arch; they are identical in both halves of the universal app.
+  x64ArchFiles: "**/node_modules/steamworks.js/**"
 dmg:
   artifactName: "RollForRuin-${version}-mac-universal.${ext}"
 linux:
