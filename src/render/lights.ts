@@ -23,7 +23,7 @@ export class LightPool {
 
   constructor(scene: THREE.Scene) {
     for (let i = 0; i < LIGHT_POOL_SIZE; i++) {
-      const l = new THREE.PointLight(0xffffff, 0, 6, 1.6);
+      const l = new THREE.PointLight(0xffffff, 0, 6, 1.5);
       l.castShadow = false;
       this.lights.push(l);
       scene.add(l);

@@ -276,7 +276,7 @@ function explodeFireball(w: World, pr: Projectile): void {
   const base = parseDice(abilityParam("fireball", "damage", "3d6"));
   const dice = { ...base, count: base.count + Math.floor((lvl - 1) / per.every) + (h?.mods.aoeDice ?? 0) + (h?.mods.sub.fireballDice ?? 0), mod: (h?.mods.fireDamage ?? 0) + (h?.mods.spellDamage ?? 0) };
   const r = abilityParam("fireball", "radius", 3.2);
-  w.vfx("fireball_burst", pr.x, pr.z, { scale: r / 2.5 });
+  w.vfx("fireball_burst", pr.x, pr.z, { scale: 0.5 });
   w.emit({ t: "sfx", id: "explosion", x: pr.x, z: pr.z });
   w.emit({ t: "shake", amount: 4 });
   const dc = h ? 8 + h.prof + abilityMod(h.scores.int) + h.mods.spellDc : 13;

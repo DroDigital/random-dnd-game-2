@@ -3,13 +3,17 @@ import type { Assets } from "./assets";
 import type { LightPool } from "./lights";
 
 const vert = /* glsl */ `
-uniform vec2 frameUv; uniform vec2 frameOffset; uniform vec2 size; uniform vec2 pivot;
+uniform vec2 frameUv; uniform vec2 frameOffset; uniform vec2 size; uniform vec2 pivot; uniform float rot; uniform float zBias;
 varying vec2 vUv;
 void main() {
   vUv = frameOffset + uv * frameUv;
-  // Camera-facing billboard: expand in view space.
+  // Camera-facing billboard: expand in view space, rotated in screen space, nudged toward the camera
+  // so effects aren't clipped by the geometry they sit in.
   vec4 mv = modelViewMatrix * vec4(0.0, 0.0, 0.0, 1.0);
-  mv.xy += (position.xy - pivot) * size;
+  vec2 o = (position.xy - pivot) * size;
+  float c = cos(rot), s = sin(rot);
+  mv.xy += vec2(c * o.x - s * o.y, s * o.x + c * o.y);
+  mv.z += zBias;
   gl_Position = projectionMatrix * mv;
 }
 `;
@@ -22,6 +26,9 @@ void main() {
   gl_FragColor = vec4(c.rgb, c.a * opacity);
 }
 `;
+
+/** World units per effect pixel (frustum height 12 / 270 texels). */
+export const VFX_TEXEL = 12 / 270;
 
 interface Live {
   mesh: THREE.Mesh;
@@ -38,6 +45,7 @@ interface Live {
   light?: { color: string; intensity: number; range: number };
   pos: THREE.Vector3;
   vel: THREE.Vector3;
+  tag: string;
 }
 
 /**
@@ -50,13 +58,19 @@ export class VfxSystem {
   private geo = new THREE.PlaneGeometry(1, 1).translate(0.5, 0.5, 0);
   constructor(private readonly scene: THREE.Scene, private readonly assets: Assets) {}
 
-  spawn(id: string, pos: THREE.Vector3, opts: { life?: number; follow?: () => THREE.Vector3 | null; vel?: THREE.Vector3; scale?: number; opacity?: number; flip?: boolean; rot?: number } = {}): void {
+  setRotation(id: string, rot: number): void {
+    for (const v of this.live) if (v.tag === id) v.mat.uniforms.rot!.value = rot;
+  }
+
+  spawn(id: string, pos: THREE.Vector3, opts: { tag?: string; life?: number; follow?: () => THREE.Vector3 | null; vel?: THREE.Vector3; scale?: number; opacity?: number; flip?: boolean; rot?: number } = {}): void {
     const entry = this.assets.vfx.get(id);
     const def = this.assets.vfxDef(id);
     if (!entry || !def) return;
     const s = entry.sheet;
     const rows = Math.ceil(s.frames / s.cols);
-    const worldW = (def.size ?? 1) * (opts.scale ?? 1);
+    // One effect pixel = one low-res texel at the default zoom, so pixel art stays crisp.
+    const q = Math.max(0.5, Math.round((opts.scale ?? 1) * 2) / 2); // keep pixel art on a clean grid
+    const worldW = s.frameW * VFX_TEXEL * q;
     const worldH = worldW * (s.frameH / s.frameW);
     const mat = new THREE.ShaderMaterial({
       vertexShader: vert, fragmentShader: frag, transparent: true, depthWrite: false, depthTest: true,
@@ -67,6 +81,8 @@ export class VfxSystem {
         size: { value: new THREE.Vector2(worldW, worldH) },
         pivot: { value: new THREE.Vector2(s.pivot[0] / s.frameW, 1 - s.pivot[1] / s.frameH) },
         opacity: { value: opts.opacity ?? 1 },
+        rot: { value: opts.rot ?? 0 },
+        zBias: { value: 1.5 },
       },
     });
     const mesh = new THREE.Mesh(this.geo, mat);
@@ -77,7 +93,7 @@ export class VfxSystem {
     this.scene.add(mesh);
     const life = opts.life ?? (s.loop ? 1.2 : s.frames / s.fps);
     const light = "light" in def && def.light ? { color: def.light, intensity: def.intensity ?? 1, range: def.range ?? 3 } : undefined;
-    this.live.push({ mesh, mat, id, age: 0, life, frames: s.frames, fps: s.fps, loop: s.loop, cols: s.cols, rows, follow: opts.follow, light, pos: pos.clone(), vel: opts.vel?.clone() ?? new THREE.Vector3() });
+    this.live.push({ mesh, mat, id, age: 0, life, frames: s.frames, fps: s.fps, loop: s.loop, cols: s.cols, rows, follow: opts.follow, light, pos: pos.clone(), vel: opts.vel?.clone() ?? new THREE.Vector3(), tag: opts.tag ?? "" });
   }
 
   update(dt: number, lights: LightPool): void {
@@ -103,9 +119,13 @@ export class VfxSystem {
       (v.mat.uniforms.frameOffset!.value as THREE.Vector2).set(fu.x < 0 ? (col + 1) / v.cols : col / v.cols, 1 - (row + 1) / v.rows);
       if (v.light) {
         const k = v.life - v.age < 0.3 ? (v.life - v.age) / 0.3 : Math.min(1, v.age / 0.08);
-        lights.request({ x: v.pos.x, y: v.pos.y + 0.8, z: v.pos.z, color: v.light.color, intensity: v.light.intensity * k, range: v.light.range, priority: 5 });
+        lights.request({ x: v.pos.x, y: v.pos.y + 0.8, z: v.pos.z, color: v.light.color, intensity: v.light.intensity * k * 5, range: v.light.range, priority: 5 });
       }
     }
+  }
+
+  kill(tag: string): void {
+    for (const v of this.live) if (v.tag === tag) v.life = Math.min(v.life, v.age);
   }
 
   get count(): number {

@@ -133,7 +133,7 @@ export function useAbility(w: World, h: Hero, id: string, slot: Slot): boolean {
       face(h, p);
       const r = abilityParam("grease", "radius", 2.6);
       w.addZone("grease", p.x, p.z, r, abilityParam("grease", "ticks", 900), h, "0", dc);
-      w.vfx("grease", p.x, p.z, { life: 2, scale: r / 1.3, ally: true });
+      w.vfx("grease", p.x, p.z, { life: 2, scale: 0.5, ally: true });
       for (const e of w.enemiesAlive()) if (w.dist(e, p) <= r && !w.saveFor(e, "dex", dc)) w.addCondition(e, "prone", BALANCE.hero.proneTicks);
       w.setState(h, "cast", 16, "castRaise");
       w.emit({ t: "sfx", id: "grease", x: p.x, z: p.z });
@@ -282,7 +282,7 @@ export function useAbility(w: World, h: Hero, id: string, slot: Slot): boolean {
       const p = aimCluster(w, h, abilityParam("volley", "range", 14), 3);
       face(h, p);
       w.areaDamage(p.x, p.z, abilityParam("volley", "radius", 3), parseDice(abilityParam("volley", "damage", "2d8")), "piercing", "dex", dc, h, { hitTeam: friendly, exclude: h.id });
-      w.vfx("arrow", p.x, p.z, { scale: 2, ally: true });
+      w.vfx("arrow", p.x, p.z, { scale: 1, ally: true });
       w.setState(h, "cast", 18, "shoot");
       return true;
     }
@@ -355,7 +355,7 @@ export function useAbility(w: World, h: Hero, id: string, slot: Slot): boolean {
       const p = aimCluster(w, h, abilityParam("hunger_of_hadar", "range", 10), 3);
       face(h, p);
       w.addZone("darkness", p.x, p.z, abilityParam("hunger_of_hadar", "radius", 3), abilityParam("hunger_of_hadar", "ticks", 360), h, abilityParam("hunger_of_hadar", "damage", "2d6"), dc);
-      w.vfx("curse", p.x, p.z, { scale: 2, life: 6, ally: true });
+      w.vfx("curse", p.x, p.z, { scale: 1, life: 6, ally: true });
       w.setState(h, "cast", 18, "castLong");
       return true;
     }
@@ -374,7 +374,7 @@ export function useAbility(w: World, h: Hero, id: string, slot: Slot): boolean {
       face(h, p);
       w.addZone("entangle", p.x, p.z, abilityParam("entangle", "radius", 3), abilityParam("entangle", "ticks", 600), h, "0", dc);
       for (const e of w.enemiesAlive()) if (w.dist(e, p) <= abilityParam("entangle", "radius", 3) && !w.saveFor(e, "str", dc)) w.addCondition(e, "restrained", abilityParam("entangle", "restrainTicks", 180));
-      w.vfx("summon", p.x, p.z, { scale: 1.5, ally: true });
+      w.vfx("summon", p.x, p.z, { scale: 1, ally: true });
       w.setState(h, "cast", 18, "castRaise");
       return true;
     }

@@ -402,7 +402,7 @@ export class World {
       zn.dice = "2d4";
       zn.tickT = 0;
       lit = true;
-      this.vfx("flames", zn.x, zn.z, { life: 8, scale: zn.r / 1.6 });
+      this.vfx("flames", zn.x, zn.z, { life: 8, scale: 0.5 });
     }
     if (lit) {
       this.popup("GREASE FIRE!", "#f2b45a", x, z, true);

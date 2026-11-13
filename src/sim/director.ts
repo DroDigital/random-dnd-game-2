@@ -74,7 +74,7 @@ function twist(w: World): void {
     const h = w.rng.pick(w.heroesUp());
     if (h) {
       w.addZone("spikes", h.x, h.z, 2.2, sec(10), null, "1d6");
-      w.vfx("dust", h.x, h.z, { scale: 2 });
+      w.vfx("dust", h.x, h.z, { scale: 1 });
       w.emit({ t: "shake", amount: 5 });
       w.areaDamage(h.x, h.z, 2.2, parseDice("2d6"), "bludgeoning", "dex", 12, null, { hitTeam: "party", onFail: { c: "prone", ticks: BALANCE.hero.proneTicks } });
     }

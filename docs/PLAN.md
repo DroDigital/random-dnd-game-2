@@ -5,7 +5,7 @@ Build order from the brief. Each step is committed when done; status is kept cur
 | # | Step | Status |
 |---|---|---|
 | 1 | Scaffold, launcher, CI, installers for all 3 OSes | done |
-| 2 | Look pipeline (one-room test) + 3 Playwright screenshots in `docs/` | todo |
+| 2 | Look pipeline (one-room test) + 3 Playwright screenshots in `docs/` | done |
 | 3 | Rules, Round Clock, 4 classes, Skeletons, 1–4 player co-op, downed state | todo |
 | 4 | Act I end to end: hex map, nodes, rooms, level-ups, rests, Wight + Initiative Break, save/resume | todo |
 | 5 | DM Director, skill checks, loot, tavern, Renown, Hall of Heroes | todo |

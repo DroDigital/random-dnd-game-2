@@ -20,8 +20,10 @@ uniform sampler2D tColor; uniform sampler2D tDepth; uniform sampler2D tNormal;
 uniform vec2 texel; uniform float near; uniform float far; uniform float enabled; uniform vec3 ink;
 varying vec2 vUv;
 float lin(float d) { return d * (far - near) + near; } // orthographic depth is already linear
+vec3 toSRGB(vec3 c) { return mix(c * 12.92, 1.055 * pow(max(c, vec3(0.0)), vec3(1.0 / 2.4)) - 0.055, step(vec3(0.0031308), c)); }
 void main() {
-  vec4 c = texture2D(tColor, vUv);
+  // The scene target holds linear light; everything after this pass works in sRGB like the palette and UI.
+  vec4 c = vec4(toSRGB(texture2D(tColor, vUv).rgb), 1.0);
   if (enabled < 0.5) { gl_FragColor = c; return; }
   float d = lin(texture2D(tDepth, vUv).r);
   vec3 n = texture2D(tNormal, vUv).rgb * 2.0 - 1.0;
@@ -219,10 +221,13 @@ export class PostChain {
     // 3. VFX layer on top of the scene colour, depth-tested but not written.
     camera.layers.set(1);
     const autoClear = r.autoClear;
+    const bg = scene.background;
+    scene.background = null; // a Color background would force a clear and wipe the scene
     r.autoClear = false;
     r.setRenderTarget(this.rtScene);
     r.render(scene, camera);
     r.autoClear = autoClear;
+    scene.background = bg;
     camera.layers.set(0);
     // 4. Outline → A, 5. tilt-shift → B, 6. UI → A, 7. quantize → B, 8. upscale → screen.
     this.mOutline.uniforms.enabled!.value = t.outline ? 1 : 0;

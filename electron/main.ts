@@ -97,9 +97,21 @@ function harden(win: BrowserWindow, kind: string): void {
   });
 }
 
+/** Query parameters forwarded to the game page (look test, autoplay demos in tests). */
+function pageQuery(): Record<string, string> {
+  const q: Record<string, string> = {};
+  for (const a of argv) {
+    const m = /^--(look|demo|seed)=(.+)$/.exec(a);
+    if (m) q[m[1]!] = m[2]!;
+  }
+  if (process.env.RFR_LOOK) q.look = process.env.RFR_LOOK;
+  return q;
+}
+
 function load(win: BrowserWindow, page: "index" | "launcher"): void {
-  if (devUrl) void win.loadURL(`${devUrl}/${page}.html`);
-  else void win.loadFile(join(distDir, `${page}.html`));
+  const query = page === "index" ? pageQuery() : {};
+  if (devUrl) void win.loadURL(`${devUrl}/${page}.html?${new URLSearchParams(query).toString()}`);
+  else void win.loadFile(join(distDir, `${page}.html`), { query });
 }
 
 function displayList(): DisplayInfo[] {
