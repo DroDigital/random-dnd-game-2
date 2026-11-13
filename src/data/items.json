@@ -1,0 +1,693 @@
+{
+ "items": {
+  "weapon_plus1": {
+   "name": "+1 Weapon",
+   "rarity": "uncommon",
+   "attune": false,
+   "effects": {
+    "toHit": 1,
+    "damage": 1
+   },
+   "desc": "A finely made, faintly humming weapon."
+  },
+  "weapon_plus2": {
+   "name": "+2 Weapon",
+   "rarity": "rare",
+   "attune": false,
+   "effects": {
+    "toHit": 2,
+    "damage": 2
+   },
+   "desc": "Magic sharpens every swing."
+  },
+  "weapon_plus3": {
+   "name": "+3 Weapon",
+   "rarity": "very_rare",
+   "attune": false,
+   "effects": {
+    "toHit": 3,
+    "damage": 3
+   },
+   "desc": "Legends are carved with this."
+  },
+  "armor_plus1": {
+   "name": "+1 Armor",
+   "rarity": "rare",
+   "attune": false,
+   "effects": {
+    "ac": 1
+   },
+   "desc": "Light as cloth, hard as iron."
+  },
+  "armor_plus2": {
+   "name": "+2 Armor",
+   "rarity": "very_rare",
+   "attune": false,
+   "effects": {
+    "ac": 2
+   },
+   "desc": "Dents itself back out."
+  },
+  "shield_plus1": {
+   "name": "+1 Shield",
+   "rarity": "uncommon",
+   "attune": false,
+   "effects": {
+    "ac": 1
+   },
+   "desc": "A sturdy, enchanted shield."
+  },
+  "cloak_of_protection": {
+   "name": "Cloak of Protection",
+   "rarity": "uncommon",
+   "attune": true,
+   "effects": {
+    "ac": 1,
+    "saves": 1
+   },
+   "desc": "+1 AC and saving throws."
+  },
+  "ring_of_protection": {
+   "name": "Ring of Protection",
+   "rarity": "rare",
+   "attune": true,
+   "effects": {
+    "ac": 1,
+    "saves": 1
+   },
+   "desc": "+1 AC and saving throws."
+  },
+  "bracers_of_defense": {
+   "name": "Bracers of Defense",
+   "rarity": "rare",
+   "attune": true,
+   "effects": {
+    "ac": 2
+   },
+   "desc": "+2 AC when unarmoured (always, here)."
+  },
+  "amulet_of_health": {
+   "name": "Amulet of Health",
+   "rarity": "rare",
+   "attune": true,
+   "effects": {
+    "maxHp": 12
+   },
+   "desc": "Your body hardens: +12 max HP."
+  },
+  "belt_of_giant_strength": {
+   "name": "Belt of Hill Giant Strength",
+   "rarity": "rare",
+   "attune": true,
+   "effects": {
+    "damage": 3,
+    "toHit": 1
+   },
+   "desc": "Strength of a giant."
+  },
+  "gauntlets_of_ogre_power": {
+   "name": "Gauntlets of Ogre Power",
+   "rarity": "uncommon",
+   "attune": true,
+   "effects": {
+    "damage": 2
+   },
+   "desc": "Heavy blows."
+  },
+  "boots_of_speed": {
+   "name": "Boots of Speed",
+   "rarity": "rare",
+   "attune": true,
+   "effects": {
+    "speed": 1.2,
+    "dodgeCooldown": -8
+   },
+   "desc": "Click the heels and blur."
+  },
+  "boots_of_elvenkind": {
+   "name": "Boots of Elvenkind",
+   "rarity": "uncommon",
+   "attune": false,
+   "effects": {
+    "speed": 0.4,
+    "stealth": 5
+   },
+   "desc": "Silent steps."
+  },
+  "cloak_of_elvenkind": {
+   "name": "Cloak of Elvenkind",
+   "rarity": "uncommon",
+   "attune": true,
+   "effects": {
+    "stealth": 5,
+    "hideTicks": 180
+   },
+   "desc": "Hard to see."
+  },
+  "flame_tongue": {
+   "name": "Flame Tongue",
+   "rarity": "rare",
+   "attune": true,
+   "effects": {
+    "onHit": "2d6",
+    "onHitType": "fire",
+    "ignites": 1
+   },
+   "desc": "A blade wreathed in fire. Ignites grease."
+  },
+  "frost_brand": {
+   "name": "Frost Brand",
+   "rarity": "very_rare",
+   "attune": true,
+   "effects": {
+    "onHit": "1d6",
+    "onHitType": "cold",
+    "resist": [
+     "fire"
+    ]
+   },
+   "desc": "Cold steel; resist fire."
+  },
+  "mace_of_disruption": {
+   "name": "Mace of Disruption",
+   "rarity": "rare",
+   "attune": true,
+   "effects": {
+    "onHitUndead": "2d6",
+    "onHitType": "radiant"
+   },
+   "desc": "Undead quail before it."
+  },
+  "javelin_of_lightning": {
+   "name": "Javelin of Lightning",
+   "rarity": "uncommon",
+   "attune": false,
+   "effects": {
+    "onHit": "1d6",
+    "onHitType": "lightning"
+   },
+   "desc": "Crackles on impact."
+  },
+  "vicious_weapon": {
+   "name": "Vicious Weapon",
+   "rarity": "rare",
+   "attune": false,
+   "effects": {
+    "critDamage": 7
+   },
+   "desc": "+7 damage on a critical hit."
+  },
+  "sword_of_wounding": {
+   "name": "Sword of Wounding",
+   "rarity": "rare",
+   "attune": true,
+   "effects": {
+    "onHit": "1d4",
+    "onHitType": "necrotic",
+    "bleed": 1
+   },
+   "desc": "Wounds that will not close."
+  },
+  "dagger_of_venom": {
+   "name": "Dagger of Venom",
+   "rarity": "rare",
+   "attune": false,
+   "effects": {
+    "onHit": "1d6",
+    "onHitType": "poison",
+    "poisonChance": 0.2
+   },
+   "desc": "Drips with venom."
+  },
+  "luck_blade": {
+   "name": "Luck Blade",
+   "rarity": "legendary",
+   "attune": true,
+   "effects": {
+    "toHit": 1,
+    "saves": 1,
+    "inspirationOnRest": 1
+   },
+   "desc": "Fortune favours you."
+  },
+  "holy_avenger": {
+   "name": "Holy Avenger",
+   "rarity": "legendary",
+   "attune": true,
+   "effects": {
+    "toHit": 3,
+    "damage": 3,
+    "onHitUndead": "2d10",
+    "onHitType": "radiant",
+    "saves": 1
+   },
+   "desc": "A paladin's dream."
+  },
+  "vorpal_sword": {
+   "name": "Vorpal Sword",
+   "rarity": "legendary",
+   "attune": true,
+   "effects": {
+    "toHit": 3,
+    "damage": 3,
+    "critOn": -1
+   },
+   "desc": "Snicker-snack."
+  },
+  "periapt_of_wound_closure": {
+   "name": "Periapt of Wound Closure",
+   "rarity": "uncommon",
+   "attune": true,
+   "effects": {
+    "deathSave": 3,
+    "healBonus": 2
+   },
+   "desc": "Your wounds close; death saves easier."
+  },
+  "ring_of_regeneration": {
+   "name": "Ring of Regeneration",
+   "rarity": "very_rare",
+   "attune": true,
+   "effects": {
+    "hpRegen": 2
+   },
+   "desc": "Regain HP every round."
+  },
+  "periapt_of_health": {
+   "name": "Periapt of Health",
+   "rarity": "uncommon",
+   "attune": false,
+   "effects": {
+    "resistCondition": [
+     "poisoned"
+    ]
+   },
+   "desc": "Immune to poison."
+  },
+  "ring_of_free_action": {
+   "name": "Ring of Free Action",
+   "rarity": "rare",
+   "attune": true,
+   "effects": {
+    "resistCondition": [
+     "restrained",
+     "grappled"
+    ]
+   },
+   "desc": "Nothing holds you."
+  },
+  "ring_of_mind_shielding": {
+   "name": "Ring of Mind Shielding",
+   "rarity": "uncommon",
+   "attune": true,
+   "effects": {
+    "resistCondition": [
+     "frightened"
+    ]
+   },
+   "desc": "Fear has no grip."
+  },
+  "helm_of_brilliance": {
+   "name": "Helm of Brilliance",
+   "rarity": "very_rare",
+   "attune": true,
+   "effects": {
+    "spellDamage": 3,
+    "resist": [
+     "fire"
+    ]
+   },
+   "desc": "Gems of fire and light."
+  },
+  "wand_of_the_war_mage": {
+   "name": "Wand of the War Mage +1",
+   "rarity": "uncommon",
+   "attune": true,
+   "effects": {
+    "spellToHit": 1,
+    "spellDc": 1
+   },
+   "desc": "Spell attacks and DCs +1."
+  },
+  "wand_of_the_war_mage_2": {
+   "name": "Wand of the War Mage +2",
+   "rarity": "rare",
+   "attune": true,
+   "effects": {
+    "spellToHit": 2,
+    "spellDc": 2
+   },
+   "desc": "Spell attacks and DCs +2."
+  },
+  "staff_of_fire": {
+   "name": "Staff of Fire",
+   "rarity": "very_rare",
+   "attune": true,
+   "effects": {
+    "fireDamage": 4,
+    "resist": [
+     "fire"
+    ]
+   },
+   "desc": "Fire spells burn hotter."
+  },
+  "wand_of_fireballs": {
+   "name": "Wand of Fireballs",
+   "rarity": "rare",
+   "attune": true,
+   "effects": {
+    "slotBonus": 2
+   },
+   "desc": "+2 Fireball charges per rest."
+  },
+  "pearl_of_power": {
+   "name": "Pearl of Power",
+   "rarity": "uncommon",
+   "attune": true,
+   "effects": {
+    "slotBonus": 1
+   },
+   "desc": "+1 spell slot per rest."
+  },
+  "robe_of_the_archmagi": {
+   "name": "Robe of the Archmagi",
+   "rarity": "legendary",
+   "attune": true,
+   "effects": {
+    "ac": 2,
+    "spellDc": 2,
+    "saves": 2
+   },
+   "desc": "Shimmering robes."
+  },
+  "cloak_of_displacement": {
+   "name": "Cloak of Displacement",
+   "rarity": "rare",
+   "attune": true,
+   "effects": {
+    "firstHitDisadvantage": 1
+   },
+   "desc": "Attacks against you start at disadvantage."
+  },
+  "cloak_of_the_bat": {
+   "name": "Cloak of the Bat",
+   "rarity": "rare",
+   "attune": true,
+   "effects": {
+    "stealth": 5,
+    "speed": 0.6
+   },
+   "desc": "Glide through the dark."
+  },
+  "gloves_of_thievery": {
+   "name": "Gloves of Thievery",
+   "rarity": "uncommon",
+   "attune": false,
+   "effects": {
+    "goldFind": 0.25
+   },
+   "desc": "+25% gold."
+  },
+  "bag_of_holding": {
+   "name": "Bag of Holding",
+   "rarity": "uncommon",
+   "attune": false,
+   "effects": {
+    "potionSlots": 2
+   },
+   "desc": "Carry 2 more potions."
+  },
+  "stone_of_good_luck": {
+   "name": "Stone of Good Luck",
+   "rarity": "uncommon",
+   "attune": true,
+   "effects": {
+    "saves": 1,
+    "checks": 1
+   },
+   "desc": "+1 to saves and checks."
+  },
+  "ioun_stone_protection": {
+   "name": "Ioun Stone of Protection",
+   "rarity": "rare",
+   "attune": true,
+   "effects": {
+    "ac": 1
+   },
+   "desc": "Orbits your head."
+  },
+  "ioun_stone_agility": {
+   "name": "Ioun Stone of Agility",
+   "rarity": "very_rare",
+   "attune": true,
+   "effects": {
+    "dodgeCooldown": -10,
+    "speed": 0.5
+   },
+   "desc": "Quicker than thought."
+  },
+  "ioun_stone_fortitude": {
+   "name": "Ioun Stone of Fortitude",
+   "rarity": "very_rare",
+   "attune": true,
+   "effects": {
+    "maxHp": 20
+   },
+   "desc": "Unshakeable."
+  },
+  "necklace_of_fireballs": {
+   "name": "Necklace of Fireballs",
+   "rarity": "rare",
+   "attune": false,
+   "effects": {
+    "fireballOnRest": 1
+   },
+   "desc": "Throw a bead: free Fireball each room."
+  },
+  "brooch_of_shielding": {
+   "name": "Brooch of Shielding",
+   "rarity": "uncommon",
+   "attune": true,
+   "effects": {
+    "resist": [
+     "force"
+    ]
+   },
+   "desc": "Shrugs off force."
+  },
+  "mantle_of_spell_resistance": {
+   "name": "Mantle of Spell Resistance",
+   "rarity": "rare",
+   "attune": true,
+   "effects": {
+    "saves": 2
+   },
+   "desc": "+2 saves."
+  },
+  "armor_of_resistance": {
+   "name": "Armor of Resistance (Necrotic)",
+   "rarity": "rare",
+   "attune": true,
+   "effects": {
+    "resist": [
+     "necrotic"
+    ]
+   },
+   "desc": "Death's touch slides off."
+  },
+  "armor_of_acid_resistance": {
+   "name": "Armor of Resistance (Acid)",
+   "rarity": "rare",
+   "attune": true,
+   "effects": {
+    "resist": [
+     "acid"
+    ]
+   },
+   "desc": "Acid hisses harmlessly."
+  },
+  "dragon_scale_mail": {
+   "name": "Dragon Scale Mail",
+   "rarity": "very_rare",
+   "attune": true,
+   "effects": {
+    "ac": 2,
+    "resist": [
+     "acid"
+    ]
+   },
+   "desc": "Black scales, still warm."
+  },
+  "sun_blade": {
+   "name": "Sun Blade",
+   "rarity": "rare",
+   "attune": true,
+   "effects": {
+    "toHit": 2,
+    "damage": 2,
+    "onHitUndead": "1d8",
+    "onHitType": "radiant"
+   },
+   "desc": "A blade of sunlight."
+  },
+  "berserker_axe": {
+   "name": "Berserker Axe",
+   "rarity": "rare",
+   "attune": true,
+   "effects": {
+    "damage": 1,
+    "maxHp": 8,
+    "rageBonus": 2
+   },
+   "desc": "Bloodthirsty."
+  },
+  "giant_slayer": {
+   "name": "Giant Slayer",
+   "rarity": "rare",
+   "attune": true,
+   "effects": {
+    "onHitLarge": "2d6",
+    "toHit": 1
+   },
+   "desc": "Topples big things."
+  },
+  "dwarven_thrower": {
+   "name": "Dwarven Thrower",
+   "rarity": "very_rare",
+   "attune": true,
+   "effects": {
+    "toHit": 3,
+    "damage": 3
+   },
+   "desc": "Returns to the hand."
+  },
+  "oathbow": {
+   "name": "Oathbow",
+   "rarity": "very_rare",
+   "attune": true,
+   "effects": {
+    "onHit": "3d6",
+    "onHitType": "piercing",
+    "rangedOnly": 1
+   },
+   "desc": "Sworn against your foe."
+  },
+  "ring_of_evasion": {
+   "name": "Ring of Evasion",
+   "rarity": "rare",
+   "attune": true,
+   "effects": {
+    "evasion": 1
+   },
+   "desc": "Area saves: no damage on success."
+  },
+  "talisman_of_pure_good": {
+   "name": "Talisman of Pure Good",
+   "rarity": "legendary",
+   "attune": true,
+   "effects": {
+    "healBonus": 6,
+    "spellDc": 2
+   },
+   "desc": "Radiant faith."
+  },
+  "eyes_of_the_eagle": {
+   "name": "Eyes of the Eagle",
+   "rarity": "uncommon",
+   "attune": true,
+   "effects": {
+    "perception": 5,
+    "rangedToHit": 1
+   },
+   "desc": "See every ambush."
+  },
+  "horn_of_valhalla": {
+   "name": "Horn of Valhalla (Silver)",
+   "rarity": "rare",
+   "attune": false,
+   "effects": {
+    "inspirationOnRest": 1,
+    "maxHp": 4
+   },
+   "desc": "Blast it: the party is inspired."
+  },
+  "dice_of_the_lucky": {
+   "name": "Lucky Bone Die",
+   "rarity": "uncommon",
+   "attune": false,
+   "effects": {
+    "inspirationOnCrit": 1
+   },
+   "desc": "Crits grant Inspiration."
+  },
+  "gem_of_seeing": {
+   "name": "Candle of Invocation",
+   "rarity": "very_rare",
+   "attune": true,
+   "effects": {
+    "delight": 1,
+    "saves": 1,
+    "healBonus": 2
+   },
+   "desc": "The DM smiles on you."
+  }
+ },
+ "consumables": {
+  "potion_healing": {
+   "name": "Potion of Healing",
+   "heal": "2d4+2",
+   "rarity": "common",
+   "price": 15
+  },
+  "potion_greater_healing": {
+   "name": "Potion of Greater Healing",
+   "heal": "4d4+4",
+   "rarity": "uncommon",
+   "price": 40
+  },
+  "potion_superior_healing": {
+   "name": "Potion of Superior Healing",
+   "heal": "8d4+8",
+   "rarity": "rare",
+   "price": 90
+  }
+ },
+ "prices": {
+  "common": 15,
+  "uncommon": 45,
+  "rare": 110,
+  "very_rare": 220,
+  "legendary": 400
+ },
+ "attunementSlots": 3,
+ "rarityWeights": {
+  "act1": {
+   "common": 0,
+   "uncommon": 70,
+   "rare": 28,
+   "very_rare": 2,
+   "legendary": 0
+  },
+  "act2": {
+   "common": 0,
+   "uncommon": 45,
+   "rare": 45,
+   "very_rare": 10,
+   "legendary": 0
+  },
+  "act3": {
+   "common": 0,
+   "uncommon": 20,
+   "rare": 50,
+   "very_rare": 25,
+   "legendary": 5
+  },
+  "finale": {
+   "common": 0,
+   "uncommon": 0,
+   "rare": 40,
+   "very_rare": 45,
+   "legendary": 15
+  }
+ }
+}

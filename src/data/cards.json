@@ -1,0 +1,20 @@
+{
+  "cards": [
+    { "id": "toughness", "name": "Toughness", "desc": "+2 max HP per level.", "mods": { "maxHpPerLevel": 2 } },
+    { "id": "asi_primary", "name": "Ability Score Improvement", "desc": "+2 to your main ability (+1 hit and damage).", "mods": { "toHit": 1, "damage": 1 } },
+    { "id": "alert", "name": "Alert", "desc": "+5 initiative; can't be surprised.", "mods": { "initiative": 5 } },
+    { "id": "mobile", "name": "Mobile", "desc": "+0.8 m/s speed, faster dodge recovery.", "mods": { "speed": 0.8, "dodgeCooldown": -6 } },
+    { "id": "lucky", "name": "Lucky", "desc": "Gain 2 Inspiration now and at every campfire.", "mods": { "inspirationOnRest": 1 }, "grant": { "inspiration": 2 } },
+    { "id": "war_caster", "name": "War Caster", "desc": "+1 spell DC and attack.", "mods": { "spellDc": 1, "spellToHit": 1 }, "casterOnly": true },
+    { "id": "heavy_armor", "name": "Heavily Armored", "desc": "+1 AC.", "mods": { "ac": 1 } },
+    { "id": "sentinel", "name": "Sentinel", "desc": "Reactions also shove.", "mods": { "reactionShove": 1 } },
+    { "id": "healer", "name": "Healer", "desc": "Your healing and stabilizing are faster and stronger.", "mods": { "healBonus": 2, "stabilizeFast": 1 } },
+    { "id": "resilient", "name": "Resilient", "desc": "+1 to all saving throws.", "mods": { "saves": 1 } },
+    { "id": "savage", "name": "Savage Attacker", "desc": "+2 damage on hits.", "mods": { "damage": 2 } },
+    { "id": "quick_clock", "name": "Quickened Clock", "desc": "Your Round Clock fills 15% faster.", "mods": { "clockSpeed": 0.15 } },
+    { "id": "elemental_adept", "name": "Elemental Adept", "desc": "+1 die on area spells.", "mods": { "aoeDice": 1 }, "casterOnly": true },
+    { "id": "great_weapon", "name": "Great Weapon Master", "desc": "+3 damage, -1 to hit.", "mods": { "damage": 3, "toHit": -1 }, "martialOnly": true },
+    { "id": "defensive_duelist", "name": "Defensive Duelist", "desc": "+2 AC while your Reaction is ready.", "mods": { "reactionAc": 2 } },
+    { "id": "durable", "name": "Durable", "desc": "+1 Hit Die and +2 regen on short rests.", "mods": { "hitDiceBonus": 1, "restHeal": 4 } }
+  ]
+}

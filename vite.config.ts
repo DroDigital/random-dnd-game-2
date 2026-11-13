@@ -11,8 +11,8 @@ export default defineConfig({
     chunkSizeWarningLimit: 2000,
     rollupOptions: {
       input: {
-        game: resolve(__dirname, "index.html"),
-        launcher: resolve(__dirname, "launcher.html"),
+        game: resolve(import.meta.dirname, "index.html"),
+        launcher: resolve(import.meta.dirname, "launcher.html"),
       },
     },
   },
@@ -20,6 +20,6 @@ export default defineConfig({
   test: {
     include: ["src/**/*.test.ts", "scripts/**/*.test.ts"],
     environment: "node",
-    coverage: { include: ["src/rules/**"], provider: "v8" },
+    coverage: { include: ["src/rules/**"], exclude: ["src/rules/**/*.test.ts"], provider: "v8", thresholds: { "src/rules/**": { statements: 100, branches: 100, functions: 100, lines: 100 } } },
   },
 });

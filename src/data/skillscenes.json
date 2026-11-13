@@ -1,0 +1,41 @@
+{
+  "skills": {
+    "athletics": "str", "acrobatics": "dex", "sleight_of_hand": "dex", "stealth": "dex", "arcana": "int", "history": "int",
+    "investigation": "int", "nature": "int", "religion": "int", "animal_handling": "wis", "insight": "wis", "medicine": "wis",
+    "perception": "wis", "survival": "wis", "deception": "cha", "intimidation": "cha", "performance": "cha", "persuasion": "cha"
+  },
+  "scenes": [
+    { "id": "collapsed_stair", "text": "A stairwell has collapsed. A rusted chain dangles over the gap.", "acts": ["act1", "act3", "finale"],
+      "options": [
+        { "label": "Climb the chain", "skill": "athletics", "dc": 12, "success": { "gold": 20, "text": "You swing across and find a stash." }, "fail": { "damage": "1d6", "text": "The chain snaps. Ouch." } },
+        { "label": "Search for another way", "skill": "investigation", "dc": 13, "success": { "item": "uncommon", "text": "A hidden passage, and a forgotten trinket." }, "fail": { "text": "Nothing. You lose time.", "boredom": 15 } } ] },
+    { "id": "whispering_altar", "text": "An altar whispers in a dead tongue. Offerings rot upon it.", "acts": ["act1", "finale"],
+      "options": [
+        { "label": "Decipher the prayer", "skill": "religion", "dc": 13, "success": { "inspiration": 1, "text": "The prayer blesses you." }, "fail": { "condition": "frightened", "text": "The whispers crawl into your head." } },
+        { "label": "Pocket the offerings", "skill": "sleight_of_hand", "dc": 14, "success": { "gold": 35, "text": "Silver coins, unblessed." }, "fail": { "damage": "2d4", "text": "The altar bites back.", "delight": 5 } } ] },
+    { "id": "trapped_corridor", "text": "Pressure plates line the corridor. The walls are pocked with dart holes.", "acts": ["act1", "act3"],
+      "options": [
+        { "label": "Dance through", "skill": "acrobatics", "dc": 13, "success": { "delight": 10, "text": "Not a single dart touches you." }, "fail": { "damage": "2d6", "text": "Darts everywhere." } },
+        { "label": "Disarm the plates", "skill": "investigation", "dc": 14, "success": { "gold": 15, "text": "You salvage the mechanism." }, "fail": { "damage": "1d10", "text": "Click." } } ] },
+    { "id": "wounded_traveller", "text": "A wounded traveller begs for help. Their eyes keep drifting to your purse.", "acts": ["act2", "act3"],
+      "options": [
+        { "label": "Tend their wounds", "skill": "medicine", "dc": 11, "success": { "item": "uncommon", "text": "Grateful, they give you a family heirloom." }, "fail": { "text": "You do your best. They limp away." } },
+        { "label": "Read their intentions", "skill": "insight", "dc": 13, "success": { "gold": 25, "text": "A bandit! You scare them off and take their stash." }, "fail": { "gold": -15, "text": "Your purse is lighter afterwards." } } ] },
+    { "id": "owlbear_tracks", "text": "Huge tracks, half-feather, half-claw, lead into the thicket.", "acts": ["act2"],
+      "options": [
+        { "label": "Follow the tracks", "skill": "survival", "dc": 12, "success": { "advantageNextFight": 1, "text": "You know where it hunts. Next fight, you strike first." }, "fail": { "boredom": 10, "text": "You walk in circles." } },
+        { "label": "Calm the startled deer", "skill": "animal_handling", "dc": 11, "success": { "heal": "2d8", "text": "The herd leads you to a healing spring." }, "fail": { "damage": "1d6", "text": "Antlers. Many antlers." } } ] },
+    { "id": "goblin_toll", "text": "Goblins block the bridge and demand a toll.", "acts": ["act2"],
+      "options": [
+        { "label": "Talk them down", "skill": "persuasion", "dc": 13, "success": { "text": "They let you pass, even bow.", "delight": 5 }, "fail": { "gold": -20, "text": "You pay. They giggle." } },
+        { "label": "Scare them off", "skill": "intimidation", "dc": 12, "success": { "gold": 20, "text": "They flee, dropping their toll box." }, "fail": { "fight": true, "text": "They don't scare easily." } } ] },
+    { "id": "sunken_library", "text": "Half-drowned shelves of books, ink running in the water.", "acts": ["act3", "finale"],
+      "options": [
+        { "label": "Study the dry tomes", "skill": "arcana", "dc": 14, "success": { "inspiration": 1, "item": "rare", "text": "A spell scroll—and a ward." }, "fail": { "condition": "poisoned", "text": "Mold spores. Lovely." } },
+        { "label": "Recall the keep's history", "skill": "history", "dc": 12, "success": { "advantageNextFight": 1, "text": "You know the dragon's habits." }, "fail": { "text": "History was never your subject." } } ] },
+    { "id": "bard_contest", "text": "A ghostly minstrel challenges you to a duel of verse.", "acts": ["act1", "act2", "act3"],
+      "options": [
+        { "label": "Perform", "skill": "performance", "dc": 13, "success": { "inspiration": 1, "delight": 10, "text": "The ghost weeps with joy." }, "fail": { "boredom": 10, "text": "Tough crowd. Dead, even." } },
+        { "label": "Bluff a famous ballad", "skill": "deception", "dc": 14, "success": { "gold": 30, "text": "He tips you from beyond the grave." }, "fail": { "condition": "frightened", "text": "The ghost is NOT amused." } } ] }
+  ]
+}

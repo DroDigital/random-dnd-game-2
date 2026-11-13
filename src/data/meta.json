@@ -1,0 +1,37 @@
+{
+  "unlocks": [
+    { "id": "class_barbarian", "kind": "class", "ref": "barbarian", "name": "Barbarian", "cost": 60 },
+    { "id": "class_ranger", "kind": "class", "ref": "ranger", "name": "Ranger", "cost": 80 },
+    { "id": "class_bard", "kind": "class", "ref": "bard", "name": "Bard", "cost": 80 },
+    { "id": "class_paladin", "kind": "class", "ref": "paladin", "name": "Paladin", "cost": 120 },
+    { "id": "class_warlock", "kind": "class", "ref": "warlock", "name": "Warlock", "cost": 120 },
+    { "id": "class_druid", "kind": "class", "ref": "druid", "name": "Druid", "cost": 150 },
+    { "id": "persona_rules_lawyer", "kind": "persona", "ref": "rules_lawyer", "name": "Rules Lawyer DM", "cost": 40 },
+    { "id": "persona_chaos", "kind": "persona", "ref": "chaos", "name": "Chaos DM", "cost": 60 },
+    { "id": "persona_killer", "kind": "persona", "ref": "killer", "name": "Killer DM", "cost": 100 },
+    { "id": "bg_soldier", "kind": "background", "ref": "soldier", "name": "Soldier background", "cost": 30 },
+    { "id": "bg_sage", "kind": "background", "ref": "sage", "name": "Sage background", "cost": 30 },
+    { "id": "bg_acolyte", "kind": "background", "ref": "acolyte", "name": "Acolyte background", "cost": 30 },
+    { "id": "bg_criminal", "kind": "background", "ref": "criminal", "name": "Criminal background", "cost": 30 },
+    { "id": "item_cloak_of_protection", "kind": "item", "ref": "cloak_of_protection", "name": "Start pool: Cloak of Protection", "cost": 50 },
+    { "id": "item_flame_tongue", "kind": "item", "ref": "flame_tongue", "name": "Start pool: Flame Tongue", "cost": 90 },
+    { "id": "item_periapt", "kind": "item", "ref": "periapt_of_wound_closure", "name": "Start pool: Periapt of Wound Closure", "cost": 60 },
+    { "id": "dice_bone", "kind": "dice", "ref": "bone", "name": "Bone dice", "cost": 20 },
+    { "id": "dice_gold", "kind": "dice", "ref": "gold", "name": "Gilded dice", "cost": 45 },
+    { "id": "dice_ember", "kind": "dice", "ref": "ember", "name": "Ember dice", "cost": 45 },
+    { "id": "decor_banner", "kind": "decor", "ref": "banner_patternA_red", "name": "Tavern banner", "cost": 15 },
+    { "id": "decor_keg", "kind": "decor", "ref": "keg", "name": "Keg of the House Ale", "cost": 15 },
+    { "id": "decor_trophy", "kind": "decor", "ref": "sword_shield_broken", "name": "Trophy wall", "cost": 35 },
+    { "id": "perm_hp", "kind": "perm", "ref": "maxHp", "name": "Tough Tales (+2 max HP)", "cost": 70, "value": 2 },
+    { "id": "perm_gold", "kind": "perm", "ref": "startGold", "name": "Nest Egg (+15 starting gold)", "cost": 50, "value": 15 }
+  ],
+  "backgrounds": {
+    "none":     { "name": "Wanderer", "mods": {} },
+    "soldier":  { "name": "Soldier", "mods": { "maxHp": 3 } },
+    "sage":     { "name": "Sage", "mods": { "checks": 1 } },
+    "acolyte":  { "name": "Acolyte", "mods": { "healBonus": 1 } },
+    "criminal": { "name": "Criminal", "mods": { "goldFind": 0.15 } }
+  },
+  "dice": { "default": { "color": null }, "bone": { "color": "#e9e4d6" }, "gold": { "color": "#e8cf4a" }, "ember": { "color": "#c4673d" } },
+  "permCap": { "maxHp": 4, "startGold": 30 }
+}

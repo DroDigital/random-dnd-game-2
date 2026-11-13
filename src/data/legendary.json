@@ -1,0 +1,14 @@
+{
+  "raise_dead":         { "name": "Raise Dead", "summon": { "id": "skeleton", "count": 2 } },
+  "grave_sweep":        { "name": "Grave Sweep", "aoe": { "radius": 3.6, "damage": "2d8", "type": "necrotic", "save": "con", "dc": 13 } },
+  "life_drain_burst":   { "name": "Life Drain Burst", "aoe": { "radius": 4.5, "damage": "2d6", "type": "necrotic", "save": "con", "dc": 13, "healSelf": true } },
+  "terrifying_screech": { "name": "Terrifying Screech", "aoe": { "radius": 6, "damage": "0", "type": "psychic", "save": "wis", "dc": 13, "condition": "frightened", "seconds": 3 } },
+  "charge":             { "name": "Charge", "dash": { "distance": 7, "damage": "2d8+5", "type": "bludgeoning", "save": "str", "dc": 15, "condition": "prone" } },
+  "frenzy":             { "name": "Frenzy", "buff": { "attackSpeed": 1.6, "seconds": 8 } },
+  "wing_buffet":        { "name": "Wing Buffet", "aoe": { "radius": 4, "damage": "2d6+4", "type": "bludgeoning", "save": "dex", "dc": 15, "condition": "prone", "seconds": 1.2, "push": 3 } },
+  "acid_pool":          { "name": "Acid Pool", "zone": { "kind": "acid", "radius": 3, "seconds": 8, "damage": "2d6" } },
+  "tail_swipe":         { "name": "Tail Swipe", "aoe": { "radius": 3.4, "damage": "2d8+4", "type": "bludgeoning", "save": "dex", "dc": 15, "push": 2.5 } },
+  "raise_wights":       { "name": "Raise the Fallen", "summon": { "id": "skeleton_brute", "count": 2 } },
+  "frightening_gaze":   { "name": "Frightening Gaze", "aoe": { "radius": 8, "damage": "0", "type": "psychic", "save": "wis", "dc": 18, "condition": "frightened", "seconds": 3 } },
+  "disrupt_life":       { "name": "Disrupt Life", "aoe": { "radius": 6, "damage": "4d6", "type": "necrotic", "save": "con", "dc": 18 } }
+}

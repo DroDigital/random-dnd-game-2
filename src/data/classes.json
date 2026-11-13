@@ -1,0 +1,82 @@
+{
+  "fighter": {
+    "name": "Fighter", "model": "fighter", "hitDie": 10, "armorAc": 16, "dexCap": 0,
+    "scores": { "str": 16, "dex": 13, "con": 15, "int": 8, "wis": 12, "cha": 10 },
+    "saves": ["str", "con"], "skills": ["athletics", "perception", "intimidation"],
+    "attack": { "kind": "melee", "ability": "str", "damage": "1d8", "type": "slashing", "reach": 1.8, "arc": 120, "windup": 7, "recover": 13, "vfx": "slash", "anim": "attack" },
+    "action": "action_surge", "bonus": "second_wind", "reaction": "parry", "passives": ["shove_every_third"],
+    "subclasses": ["champion", "shieldwarden"], "unlock": 0, "color": "#e5584f"
+  },
+  "wizard": {
+    "name": "Wizard", "model": "wizard", "hitDie": 6, "armorAc": 10, "dexCap": 5,
+    "scores": { "str": 8, "dex": 14, "con": 14, "int": 16, "wis": 12, "cha": 10 },
+    "saves": ["int", "wis"], "skills": ["arcana", "history", "investigation"],
+    "attack": { "kind": "projectile", "ability": "int", "damage": "1d10", "type": "fire", "speed": 14, "range": 14, "windup": 10, "recover": 16, "vfx": "fireball_bolt", "anim": "cast", "fire": true },
+    "action": "fireball", "actionHold": "grease", "bonus": "misty_step", "reaction": "shield", "passives": ["arcane_recovery"],
+    "subclasses": ["evoker", "pyromancer"], "unlock": 0, "color": "#4f9be5"
+  },
+  "rogue": {
+    "name": "Rogue", "model": "rogue", "hitDie": 8, "armorAc": 11, "dexCap": 5,
+    "scores": { "str": 10, "dex": 16, "con": 14, "int": 12, "wis": 13, "cha": 8 },
+    "saves": ["dex", "int"], "skills": ["stealth", "acrobatics", "sleight_of_hand", "perception", "investigation"],
+    "attack": { "kind": "melee", "ability": "dex", "damage": "1d6", "type": "piercing", "reach": 1.6, "arc": 90, "windup": 5, "recover": 10, "vfx": "dagger", "anim": "stab" },
+    "action": "sneak_strike", "bonus": "cunning_dash", "bonusHold": "cunning_hide", "reaction": "uncanny_dodge", "passives": [],
+    "subclasses": ["thief", "shadowblade"], "unlock": 0, "color": "#5fc77a"
+  },
+  "cleric": {
+    "name": "Cleric", "model": "cleric", "hitDie": 8, "armorAc": 16, "dexCap": 2,
+    "scores": { "str": 14, "dex": 10, "con": 14, "int": 10, "wis": 16, "cha": 12 },
+    "saves": ["wis", "cha"], "skills": ["religion", "medicine", "insight"],
+    "attack": { "kind": "melee", "ability": "str", "damage": "1d6", "type": "bludgeoning", "reach": 1.7, "arc": 110, "windup": 8, "recover": 14, "vfx": "slash", "anim": "attack2" },
+    "action": "turn_undead", "bonus": "healing_word", "bonusHold": "spiritual_weapon", "reaction": "sanctuary", "passives": [],
+    "subclasses": ["life", "grave_warden"], "unlock": 0, "color": "#e8cf4a"
+  },
+  "barbarian": {
+    "name": "Barbarian", "model": "barbarian", "hitDie": 12, "armorAc": 12, "dexCap": 2,
+    "scores": { "str": 16, "dex": 14, "con": 16, "int": 8, "wis": 10, "cha": 8 },
+    "saves": ["str", "con"], "skills": ["athletics", "survival", "intimidation"],
+    "attack": { "kind": "melee", "ability": "str", "damage": "1d12", "type": "slashing", "reach": 1.9, "arc": 140, "windup": 10, "recover": 16, "vfx": "cleave", "anim": "attackHeavy" },
+    "action": "reckless_strike", "bonus": "rage", "reaction": "retaliation", "passives": ["danger_sense"],
+    "subclasses": ["berserker", "stormcaller"], "unlock": 60, "color": "#c4673d"
+  },
+  "ranger": {
+    "name": "Ranger", "model": "ranger", "hitDie": 10, "armorAc": 13, "dexCap": 5,
+    "scores": { "str": 10, "dex": 16, "con": 14, "int": 10, "wis": 14, "cha": 8 },
+    "saves": ["str", "dex"], "skills": ["survival", "nature", "stealth", "perception"],
+    "attack": { "kind": "projectile", "ability": "dex", "damage": "1d8", "type": "piercing", "speed": 20, "range": 18, "windup": 8, "recover": 12, "vfx": "arrow", "anim": "shoot" },
+    "action": "volley", "bonus": "hunters_mark", "reaction": "evasive_step", "passives": [],
+    "subclasses": ["hunter", "beastwarden"], "unlock": 80, "color": "#3d5a45"
+  },
+  "bard": {
+    "name": "Bard", "model": "bard", "hitDie": 8, "armorAc": 11, "dexCap": 5,
+    "scores": { "str": 8, "dex": 14, "con": 14, "int": 10, "wis": 12, "cha": 16 },
+    "saves": ["dex", "cha"], "skills": ["performance", "persuasion", "deception", "insight"],
+    "attack": { "kind": "melee", "ability": "dex", "damage": "1d8", "type": "piercing", "reach": 1.6, "arc": 90, "windup": 6, "recover": 11, "vfx": "dagger", "anim": "stab" },
+    "action": "thunderwave", "bonus": "bardic_inspiration", "reaction": "cutting_words", "passives": [],
+    "subclasses": ["lore", "valor"], "unlock": 80, "color": "#8f2a35"
+  },
+  "paladin": {
+    "name": "Paladin", "model": "paladin", "hitDie": 10, "armorAc": 18, "dexCap": 0,
+    "scores": { "str": 16, "dex": 10, "con": 14, "int": 8, "wis": 12, "cha": 15 },
+    "saves": ["wis", "cha"], "skills": ["athletics", "religion", "persuasion"],
+    "attack": { "kind": "melee", "ability": "str", "damage": "1d8", "type": "slashing", "reach": 1.8, "arc": 110, "windup": 8, "recover": 14, "vfx": "slash", "anim": "attack" },
+    "action": "divine_smite", "bonus": "lay_on_hands", "reaction": "protection", "passives": [],
+    "subclasses": ["devotion", "vengeance"], "unlock": 120, "color": "#f2b45a"
+  },
+  "warlock": {
+    "name": "Warlock", "model": "warlock", "hitDie": 8, "armorAc": 11, "dexCap": 5,
+    "scores": { "str": 8, "dex": 14, "con": 14, "int": 12, "wis": 10, "cha": 16 },
+    "saves": ["wis", "cha"], "skills": ["arcana", "deception", "intimidation"],
+    "attack": { "kind": "projectile", "ability": "cha", "damage": "1d10", "type": "force", "speed": 16, "range": 16, "windup": 9, "recover": 14, "vfx": "necrotic_bolt", "anim": "cast", "push": 1.0 },
+    "action": "hunger_of_hadar", "bonus": "hex", "reaction": "hellish_rebuke", "passives": [],
+    "subclasses": ["fiend_pact", "hollow_pact"], "unlock": 120, "color": "#463c5e"
+  },
+  "druid": {
+    "name": "Druid", "model": "druid", "hitDie": 8, "armorAc": 13, "dexCap": 2,
+    "scores": { "str": 10, "dex": 12, "con": 14, "int": 12, "wis": 16, "cha": 8 },
+    "saves": ["int", "wis"], "skills": ["nature", "survival", "medicine", "animal_handling"],
+    "attack": { "kind": "projectile", "ability": "wis", "damage": "1d8", "type": "fire", "speed": 12, "range": 12, "windup": 9, "recover": 14, "vfx": "fireball_bolt", "anim": "cast", "fire": true },
+    "action": "entangle", "bonus": "healing_word", "reaction": "thorn_ward", "passives": [],
+    "subclasses": ["land", "moon"], "unlock": 150, "color": "#5fc77a"
+  }
+}
