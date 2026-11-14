@@ -1,6 +1,6 @@
 import { Assets } from "../render/assets";
 import { GameRenderer } from "../render/renderer";
-import { Draw, UI_H, UI_W } from "../ui/draw";
+import { Draw, UI_W } from "../ui/draw";
 import { Hud } from "../ui/hud";
 import { drawMenu, wrapIndex, type MenuItem } from "../ui/menu";
 import { lookTestSim } from "./looktest";
