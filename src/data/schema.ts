@@ -25,7 +25,7 @@ export const BalanceSchema = z.object({
     staggerTicks: z.number().int(), critFreezeTicks: z.number().int(), hitstunTicks: z.number().int(), deathSaveTicks: z.number().int(),
     stabilizeTicks: z.number().int(), stabilizeRange: z.number(), flankRange: z.number(), helpTicks: z.number().int(), helpRange: z.number(),
     shoveDistance: z.number(), proneTicks: z.number().int(), hideTicks: z.number().int(), dashTicks: z.number().int(), dashMultiplier: z.number(),
-    invulnAfterReviveTicks: z.number().int(), combatSpeedMin: z.number(),
+    invulnAfterReviveTicks: z.number().int(), combatSpeedMin: z.number(), loneHpMult: z.number(),
   }),
   enemy: z.object({
     radius: z.number(), repathTicks: z.number().int(), aggroRange: z.number(), leashRange: z.number(), separation: z.number(),
@@ -35,13 +35,14 @@ export const BalanceSchema = z.object({
   initiativeBreak: z.object({ planTicks: z.number().int(), moveTiles: z.number(), maxPerBoss: z.number().int(), resolveTicksPerTurn: z.number().int(), eliteBreaks: z.number().int() }),
   encounter: z.object({
     difficulty: z.record(z.string(), z.enum(["low", "moderate", "high"])), multiplier: z.number(), loneHeroMultiplier: z.number(),
-    companionMultiplier: z.number(), maxEnemies: z.number().int(), killerTierMultiplier: z.number(),
+    companionMultiplier: z.number(), partySizeMultiplier: z.array(z.number()).length(4), maxEnemies: z.number().int(), killerTierMultiplier: z.number(),
   }),
   rest: z.object({ shortRestHitDiceFraction: z.number(), campfireUpgradeAmount: z.number(), longRestFull: z.boolean() }),
   loot: z.object({ goldPerEncounter: z.tuple([z.number(), z.number()]), goldPerElite: z.tuple([z.number(), z.number()]), eliteGuaranteedItem: z.boolean(), itemChance: z.number(), potionChance: z.number() }),
   renown: z.object({ perNode: z.number(), perBoss: z.number(), perAct: z.number(), victory: z.number(), minimum: z.number() }),
   leveling: z.object({ fightsPerMidLevel: z.number().int(), finaleLevel: z.number().int() }),
   camera: z.object({ minHeight: z.number(), maxHeight: z.number(), padding: z.number() }),
+  realtime: z.object({ _comment: z.string().optional(), heroHpScale: z.number(), healScale: z.number(), enemyHpScale: z.number(), bossHpScale: z.number(), eliteHpScale: z.number(), heroAttackTempo: z.number(), enemyCooldownScale: z.number() }),
 });
 
 const AttackDef = z.object({

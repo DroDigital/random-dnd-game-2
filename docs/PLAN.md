@@ -10,7 +10,7 @@ Build order from the brief. Each step is committed when done; status is kept cur
 | 4 | Act I end to end: hex map, nodes, rooms, level-ups, rests, Wight + Initiative Break, save/resume | done |
 | 5 | DM Director, skill checks, loot, tavern, Renown, Hall of Heroes | done |
 | 6 | Acts II–III, finale, all enemies, items, subclasses | done |
-| 7 | Balance simulator (1,000 seeded headless runs per party size) | todo |
+| 7 | Balance simulator (1,000 seeded headless runs per party size) | done |
 | 8 | Accessibility, Steam, final credits, legal review | todo |
 
 ## Architecture

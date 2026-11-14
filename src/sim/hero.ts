@@ -98,7 +98,7 @@ export function recalc(h: Hero, perm: Record<string, number> = {}): void {
   const con = abilityMod(scores.con), dex = abilityMod(scores.dex);
   const perLevel = c.hitDie / 2 + 1 + con;
   const oldMax = h.maxHp;
-  h.maxHp = Math.max(1, c.hitDie + con + (h.level - 1) * perLevel + h.mods.maxHp + h.mods.maxHpPerLevel * h.level);
+  h.maxHp = Math.max(1, Math.round((c.hitDie + con + (h.level - 1) * perLevel + h.mods.maxHp + h.mods.maxHpPerLevel * h.level) * BALANCE.realtime.heroHpScale * (h.tags.includes("lone") ? BALANCE.hero.loneHpMult : 1)));
   if (oldMax > 0) h.hp = Math.min(h.maxHp, Math.max(h.hp + (h.maxHp - oldMax), h.hp > 0 ? 1 : 0));
   else h.hp = h.maxHp;
   h.ac = c.armorAc + Math.min(dex, c.dexCap) + h.mods.ac;
@@ -119,7 +119,7 @@ export function makeHero(id: number, slot: number, cls: string, opts: { level?: 
     slots: 0, dodgeCd: 0, iframes: 0, down: null, stable: false, fallen: false, injuries: [], items: [...(opts.items ?? [])], attuned: [],
     potions: 1, cards: [], background: opts.background ?? "none", upgrades: {}, order: "follow", layOnHands: 0,
     holdT: { action: 0, bonus: 0, interact: 0 }, markId: 0, stats: { kills: 0, damage: 0, crits: 0, downs: 0, heals: 0 }, mods: emptyMods(),
-    aiMem: { hold: null, holdT: 0, holdX: 0, holdZ: 0, prevDown: 0 },
+    aiMem: { hold: null, holdT: 0, holdX: 0, holdZ: 0, prevDown: 0, path: [], repath: 0 },
   };
   h.attuned = h.items.filter((i) => ITEMS.items[i]?.attune).slice(0, ITEMS.attunementSlots);
   recalc(h, opts.perm);

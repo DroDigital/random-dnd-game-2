@@ -112,7 +112,7 @@ export interface Hero extends Actor {
   stats: { kills: number; damage: number; crits: number; downs: number; heals: number };
   mods: Mods;
   /** Companion/bot memory (multi-tick button holds, hold position). */
-  aiMem: { hold: "action" | "bonus" | "interact" | null; holdT: number; holdX: number; holdZ: number; prevDown: number };
+  aiMem: { hold: "action" | "bonus" | "interact" | null; holdT: number; holdX: number; holdZ: number; prevDown: number; path: { x: number; z: number }[]; repath: number };
 }
 
 export interface Telegraph {

@@ -5,6 +5,9 @@ import type { InputFrame, SimEvent } from "./types";
 
 export interface HeadlessResult {
   victory: boolean;
+  /** Seconds each cleared combat room took. */
+  roomSeconds: number[];
+  stalled: boolean;
   ticks: number;
   act: number;
   nodes: number;
@@ -23,18 +26,26 @@ export function runHeadless(cfg: RunConfig, opts: { maxTicks?: number; inputs?: 
   const sim = new Sim(createRun(cfg));
   const max = opts.maxTicks ?? 60 * 60 * 120;
   let stall = 0;
+  const roomSeconds: number[] = [];
+  let roomStart = -1;
   while (!sim.s.run.ended && sim.s.tick < max) {
     // Bots decide every 30 ticks so menus have a human-ish rhythm (and runs stay cheap).
     const cmds = sim.s.tick % 30 === 0 ? botCommands(sim.s) : [];
     if (opts.extraCommands) cmds.push(...opts.extraCommands(sim.s.tick));
     const ev = sim.step(opts.inputs ? opts.inputs(sim.s.tick) : [], cmds);
     opts.onEvents?.(ev, sim.s.tick);
+    const room = sim.s.room;
+    if (room?.fight && !room.cleared && roomStart < 0) roomStart = sim.s.tick;
+    if (roomStart >= 0 && (!room || room.cleared)) {
+      roomSeconds.push((sim.s.tick - roomStart) / 60);
+      roomStart = -1;
+    }
     stall = sim.s.run.phase === "room" && sim.s.room?.cleared ? stall + 1 : 0;
     if (stall > 60 * 60) break; // safety: should never happen
   }
   const s = sim.s;
   return {
-    victory: !!s.run.ended?.victory, ticks: s.tick, act: s.run.act, nodes: s.run.nodesCleared, bosses: s.run.bossesBeaten,
+    victory: !!s.run.ended?.victory, roomSeconds, stalled: !s.run.ended, ticks: s.tick, act: s.run.act, nodes: s.run.nodesCleared, bosses: s.run.bossesBeaten,
     ttk: s.run.ttk, levels: s.heroes.map((h) => h.level), downs: s.heroes.reduce((t, h) => t + h.stats.downs, 0), sim,
   };
 }

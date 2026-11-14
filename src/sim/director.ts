@@ -1,6 +1,7 @@
 import { BALANCE, DIRECTOR, ACTS } from "../data";
 import { parseDice } from "../rules/dice";
 import { spawnEnemy } from "./enemyai";
+import { nearestWalkable } from "./nav";
 import { sec, type World } from "./world";
 
 /**
@@ -29,6 +30,18 @@ export function updateDirector(w: World): void {
       if ((s.tick - room.startTick) / 60 > B.slowFightSeconds) gain += B.perSecondSlowFight;
       d.boredom = Math.min(B.max, d.boredom + gain * persona.boredomMult);
       if (d.boredom >= B.max && d.twistCooldown <= 0) twist(w);
+      // Failsafe: a fight that drags on far too long gets its stragglers dragged into the light.
+      if ((s.tick - room.startTick) / 60 > 150 && (s.tick - room.startTick) % 600 === 0) {
+        const hero = w.heroesUp()[0];
+        if (hero) for (const e of enemies) {
+          if (w.dist(e, hero) < 6) continue;
+          const p = nearestWalkable(room, hero.x + (w.rng.float() - 0.5) * 4, hero.z + (w.rng.float() - 0.5) * 4);
+          e.x = p.x;
+          e.z = p.z;
+          e.ai.mode = "chase";
+          w.vfx("summon", e.x, e.z, { scale: 0.6 });
+        }
+      }
       mercy(w);
     }
     if (d.delight >= D.inspirationAt) {
@@ -71,7 +84,8 @@ function twist(w: World): void {
       e.name = "Rival Adventurer";
     }
   } else {
-    const h = w.rng.pick(w.heroesUp());
+    const up = w.heroesUp();
+    const h = up.length ? w.rng.pick(up) : null;
     if (h) {
       w.addZone("spikes", h.x, h.z, 2.2, sec(10), null, "1d6");
       w.vfx("dust", h.x, h.z, { scale: 1 });

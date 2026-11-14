@@ -239,7 +239,7 @@ export class Game {
     if (p1) items.push({ label: "P1 class", value: CLASSES[p1.cls]!.name, hint: "Other players change class with Left/Right on their own device." });
     if (p1) items.push({ label: "P1 background", value: META.backgrounds[p1.background]?.name ?? "Wanderer", hint: "Backgrounds are small perks unlocked with Renown. Other players: Up/Down on their own device." });
     if (this.players.length === 1) items.push({ label: "Solo mode", value: this.mode === "lone" ? "Lone Hero" : "Party (3 AI)", hint: this.mode === "lone" ? "One hero, solo-tuned encounters and an extra death save." : "Three AI companions. D-pad: Up Follow, Right Focus, Down Hold, Left Defensive." });
-    items.push({ label: "Dungeon Master", value: DIRECTOR.personas[this.persona].name, hint: DIRECTOR.personas[this.persona].desc + (personaUnlocked(this.meta, this.persona) ? "" : " (locked: buy in the Renown shop)") });
+    items.push({ label: "Game Master", value: DIRECTOR.personas[this.persona].name, hint: DIRECTOR.personas[this.persona].desc + (personaUnlocked(this.meta, this.persona) ? "" : " (locked: buy in the Renown shop)") });
     if (this.persona === "killer") items.push({ label: "Killer tier", value: String(this.killerTier), hint: "Each tier stacks more budget, HP and damage." });
     items.push({ label: `Renown shop (${this.meta.renown})`, hint: "Spend Renown on classes, backgrounds, DMs, items, dice and decor." });
     items.push({ label: "Hall of Heroes", hint: "Plaques for the fallen. Their best items return as Heirlooms." });
@@ -276,14 +276,14 @@ export class Game {
       if (it.label === "P1 class" && p1) this.cycleClass(p1, dir);
       if (it.label === "P1 background" && p1) this.cycleBackground(p1, dir);
       if (it.label === "Solo mode") this.mode = this.mode === "lone" ? "party" : "lone";
-      if (it.label === "Dungeon Master") this.persona = PERSONAS[wrapIndex(PERSONAS.indexOf(this.persona) + dir, PERSONAS.length)]!;
+      if (it.label === "Game Master") this.persona = PERSONAS[wrapIndex(PERSONAS.indexOf(this.persona) + dir, PERSONAS.length)]!;
       if (it.label === "Killer tier") this.killerTier = Math.max(1, Math.min(10, this.killerTier + dir));
       this.audio.sfx("ui_move");
     }
     if (m & MENU.confirm && !it.disabled && p1) {
       this.audio.sfx("ui_confirm");
       if (it.label === "Start a new run") {
-        if (!personaUnlocked(this.meta, this.persona)) this.hud.narrate("That Dungeon Master isn't unlocked yet.");
+        if (!personaUnlocked(this.meta, this.persona)) this.hud.narrate("That Game Master isn't unlocked yet.");
         else void this.startRun();
       } else if (it.label === "Resume saved run") void this.resumeRun();
       else if (it.label.startsWith("Renown shop")) { this.screen = "shop"; this.listSel = 0; }
@@ -679,7 +679,10 @@ export class Game {
       this.fpsN = 0;
     }
     this.input.poll(now);
-    if (this.input.tabPressed) {
+    // Roll log: Tab on a keyboard, View/Create/− on a controller.
+    const padTab = this.players.find((p) => (this.input.peekMenu(p.device) & MENU.tab) !== 0);
+    if (padTab) this.input.takeMenu(padTab.device);
+    if (this.input.tabPressed || padTab) {
       this.hud.showLog = !this.hud.showLog;
       this.input.tabPressed = false;
     }
@@ -860,6 +863,13 @@ export class Game {
       }
     }
     if (!this.input.hasPads()) d.text("Controllers appear after their first button press.", 212, 184, PAL.mist, 8);
+    // Controls for the last player to join, in their device's glyphs (Xbox / PlayStation / Switch / keys).
+    const last = this.players[this.players.length - 1];
+    if (last) {
+      const b = (k: "attack" | "action" | "bonus" | "dodge" | "reaction" | "interact" | "help"): string => buttonLabel(this.input, last.device, k);
+      d.text(`${PLAYER_IDENTITY[last.slot]!.name}: Attack ${b("attack")}  Dodge ${b("dodge")}  Action ${b("action")}  Bonus ${b("bonus")}  React ${b("reaction")}  Interact ${b("interact")}  Help ${b("help")}`, 8, 252, PAL.fog, 8);
+      d.text("Hold Action/Bonus for the alternate ability. Tab/View: roll log. Esc/Start: pause.", 8, 262, PAL.mist, 8);
+    }
     d.text(`Renown ${this.meta.renown}   Runs ${this.meta.stats.runs}   Wins ${this.meta.stats.wins}`, 470, 4, PAL.gold, 8, "right");
   }
 

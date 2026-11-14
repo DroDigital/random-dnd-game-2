@@ -6,7 +6,7 @@ import { resolveAttack } from "../rules/attack";
 import { canAct, speedMultiplier, tickConditions } from "../rules/conditions";
 import { rollInitiative } from "../rules/initiative";
 import { abilityMod } from "../rules/d20";
-import { isBlocked } from "./nav";
+import { isBlocked, nearestWalkable } from "./nav";
 import { activeTelegraph, aimTarget, resolveStrike, updateSummon, useAbility } from "./abilities";
 import { checkLegendary, enemyAttackRoll, runLegendary, updateEnemy } from "./enemyai";
 import { sec, type World } from "./world";
@@ -145,8 +145,9 @@ export function updateHero(w: World, h: Hero, inp: InputFrame): void {
     const c = CLASSES[h.cls]!;
     const t = aimTarget(w, h, c.attack.kind === "melee" ? (c.attack.reach ?? 1.6) + 1.5 : c.attack.range ?? 12, 60);
     if (t) h.facing = Math.atan2(t.x - h.x, t.z - h.z);
-    const wind = Math.max(2, Math.round(c.attack.windup / atkSpeed));
-    const rec = Math.max(3, Math.round(c.attack.recover / atkSpeed));
+    const tempo = BALANCE.realtime.heroAttackTempo;
+    const wind = Math.max(2, Math.round((c.attack.windup * tempo) / atkSpeed));
+    const rec = Math.max(3, Math.round((c.attack.recover * tempo) / atkSpeed));
     h.strike = { kind: "basic", at: wind, targetId: t?.id };
     w.setState(h, "windup", wind + rec, c.attack.anim);
     return;
@@ -345,6 +346,13 @@ function physics(w: World): void {
     if (!isBlocked(room, nx + Math.sign(dx) * r, a.z) && !isBlocked(room, nx + Math.sign(dx) * r, a.z + r * 0.7) && !isBlocked(room, nx + Math.sign(dx) * r, a.z - r * 0.7)) a.x = nx;
     const nz = a.z + dz;
     if (!isBlocked(room, a.x, nz + Math.sign(dz) * r) && !isBlocked(room, a.x + r * 0.7, nz + Math.sign(dz) * r) && !isBlocked(room, a.x - r * 0.7, nz + Math.sign(dz) * r)) a.z = nz;
+  }
+  // Anything that ended up inside geometry (a push, a spawn ring) is popped back out.
+  if (room) for (const a of all) {
+    if (a.kind === "summon" || !isBlocked(room, a.x, a.z)) continue;
+    const p = nearestWalkable(room, a.x, a.z);
+    a.x = p.x;
+    a.z = p.z;
   }
   // Separation.
   const solid = all.filter((a) => a.kind !== "summon" && !(w.isHero(a) && a.down));

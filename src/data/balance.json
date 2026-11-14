@@ -4,7 +4,12 @@
   "hero": {
     "speed": 4.4,
     "radius": 0.38,
-    "dodge": { "ticks": 18, "iframes": 13, "speed": 10.5, "cooldown": 24 },
+    "dodge": {
+      "ticks": 18,
+      "iframes": 13,
+      "speed": 10.5,
+      "cooldown": 24
+    },
     "staggerTicks": 24,
     "critFreezeTicks": 5,
     "hitstunTicks": 8,
@@ -20,7 +25,8 @@
     "dashTicks": 120,
     "dashMultiplier": 1.8,
     "invulnAfterReviveTicks": 60,
-    "combatSpeedMin": 0.7
+    "combatSpeedMin": 0.7,
+    "loneHpMult": 1.4
   },
   "enemy": {
     "radius": 0.42,
@@ -31,21 +37,84 @@
     "hitstunTicks": 10,
     "eliteHpMult": 1.6,
     "eliteDamageBonus": 2,
-    "bossHpByPartySize": [0.55, 0.75, 0.9, 1.0],
-    "solo": { "hpMult": 0.85 }
+    "bossHpByPartySize": [
+      0.5,
+      0.75,
+      1.2,
+      2.1
+    ],
+    "solo": {
+      "hpMult": 0.85
+    }
   },
-  "initiativeBreak": { "planTicks": 600, "moveTiles": 6, "maxPerBoss": 3, "resolveTicksPerTurn": 36, "eliteBreaks": 1 },
+  "initiativeBreak": {
+    "planTicks": 600,
+    "moveTiles": 6,
+    "maxPerBoss": 3,
+    "resolveTicksPerTurn": 36,
+    "eliteBreaks": 1
+  },
   "encounter": {
-    "difficulty": { "encounter": "moderate", "elite": "high", "boss": "low", "ambush": "low" },
+    "difficulty": {
+      "encounter": "moderate",
+      "elite": "high",
+      "boss": "low",
+      "ambush": "low"
+    },
     "multiplier": 1.0,
     "loneHeroMultiplier": 0.7,
     "companionMultiplier": 1.0,
     "maxEnemies": 12,
-    "killerTierMultiplier": 0.12
+    "killerTierMultiplier": 0.12,
+    "partySizeMultiplier": [
+      0.75,
+      0.9,
+      1.4,
+      2.5
+    ]
   },
-  "rest": { "shortRestHitDiceFraction": 0.5, "campfireUpgradeAmount": 1, "longRestFull": true },
-  "loot": { "goldPerEncounter": [8, 20], "goldPerElite": [25, 50], "eliteGuaranteedItem": true, "itemChance": 0.35, "potionChance": 0.25 },
-  "renown": { "perNode": 2, "perBoss": 15, "perAct": 10, "victory": 40, "minimum": 5 },
-  "leveling": { "fightsPerMidLevel": 3, "finaleLevel": 8 },
-  "camera": { "minHeight": 12, "maxHeight": 20, "padding": 3.5 }
+  "rest": {
+    "shortRestHitDiceFraction": 0.5,
+    "campfireUpgradeAmount": 1,
+    "longRestFull": true
+  },
+  "loot": {
+    "goldPerEncounter": [
+      8,
+      20
+    ],
+    "goldPerElite": [
+      25,
+      50
+    ],
+    "eliteGuaranteedItem": true,
+    "itemChance": 0.35,
+    "potionChance": 0.25
+  },
+  "renown": {
+    "perNode": 2,
+    "perBoss": 15,
+    "perAct": 10,
+    "victory": 40,
+    "minimum": 5
+  },
+  "leveling": {
+    "fightsPerMidLevel": 3,
+    "finaleLevel": 8
+  },
+  "camera": {
+    "minHeight": 12,
+    "maxHeight": 20,
+    "padding": 3.5
+  },
+  "realtime": {
+    "_comment": "SRD numbers assume one attack per 6 s round; these scale them for real-time play.",
+    "heroHpScale": 2.8,
+    "healScale": 2.8,
+    "enemyHpScale": 5.0,
+    "bossHpScale": 3.0,
+    "eliteHpScale": 1.0,
+    "heroAttackTempo": 1.8,
+    "enemyCooldownScale": 1.3
+  }
 }

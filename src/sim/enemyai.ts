@@ -4,7 +4,7 @@ import { resolveAttack } from "../rules/attack";
 import { attackModeSources, canAct, has, speedMultiplier, type Condition } from "../rules/conditions";
 import { abilityMod, proficiencyBonus } from "../rules/d20";
 import { crToXp } from "../rules/encounter";
-import { findPath, lineOfSight } from "./nav";
+import { findPath, lineOfSight, nearestWalkable, walkLine } from "./nav";
 import { inTelegraph } from "./abilities";
 import { sec, type World } from "./world";
 import type { Ability, Enemy, Hero, Telegraph } from "./types";
@@ -14,13 +14,14 @@ export function spawnEnemy(w: World, type: string, x: number, z: number, opts: {
   if (!d) throw new Error(`unknown enemy ${type}`);
   const run = w.s.run;
   const party = Math.max(1, w.s.heroes.filter((h) => !h.fallen).length);
-  let hp = d.hp * (d.hpMult ?? 1);
+  let hp = d.hp * (d.hpMult ?? 1) * BALANCE.realtime.enemyHpScale * (d.boss ? BALANCE.realtime.bossHpScale : 1);
   if (d.boss) hp *= BALANCE.enemy.bossHpByPartySize[Math.min(3, party - 1)]!;
   if (opts.elite) hp *= BALANCE.enemy.eliteHpMult;
   if (run.mode === "lone") hp *= BALANCE.enemy.solo.hpMult;
   const persona = w.persona;
   if (run.persona === "killer" && persona.tierHp) hp *= 1 + persona.tierHp * run.killerTier;
   hp = Math.max(1, Math.round(hp));
+  if (w.s.room) ({ x, z } = nearestWalkable(w.s.room, x, z));
   const crv = d.cr.includes("/") ? Number(d.cr.split("/")[0]) / Number(d.cr.split("/")[1]) : Number(d.cr);
   const e: Enemy = {
     id: w.id(), kind: "enemy", team: "foe", model: d.model, name: (opts.elite ? "Elite " : "") + d.name, x, z, vx: 0, vz: 0, facing: Math.PI,
@@ -75,7 +76,7 @@ function dir(a: { x: number; z: number }, b: { x: number; z: number }): { x: num
 function moveToward(w: World, e: Enemy, goal: { x: number; z: number }, speedMul = 1): void {
   const room = w.s.room!;
   e.ai.repath--;
-  const direct = lineOfSight(room, e.x, e.z, goal.x, goal.z);
+  const direct = walkLine(room, e.x, e.z, goal.x, goal.z, e.radius * 0.9);
   let wp = goal;
   if (!direct) {
     if (e.ai.repath <= 0 || e.ai.path.length === 0) {
@@ -175,7 +176,7 @@ function resolveEnemyAttack(w: World, e: Enemy): void {
   e.telegraph = null;
   if (!tg) return;
   const a = ENEMIES[e.type]!.attacks[tg.attackIdx]!;
-  e.ai.cooldowns[tg.attackIdx] = sec(a.cooldown);
+  e.ai.cooldowns[tg.attackIdx] = sec(a.cooldown * BALANCE.realtime.enemyCooldownScale);
   if (tg.cancelled) {
     w.popup("…", "#a49eb6", e.x, e.z);
     return;

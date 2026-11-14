@@ -1,6 +1,7 @@
 import { CLASSES } from "../data";
 import { activeTelegraph, aimTarget, inTelegraph } from "./abilities";
 import type { World } from "./world";
+import { findPath, walkLine } from "./nav";
 import { BTN, type Enemy, type Hero, type InputFrame } from "./types";
 
 /**
@@ -28,8 +29,20 @@ export function companionInput(w: World, h: Hero, skill = 0.75): InputFrame {
   // While a hold is in progress keep holding and stay put.
   if (mem.hold) return finish();
   const go = (x: number, z: number, stop = 0.3): boolean => {
-    const dx = x - h.x, dz = z - h.z, d = Math.hypot(dx, dz);
-    if (d <= stop) return true;
+    const d0 = Math.hypot(x - h.x, z - h.z);
+    if (d0 <= stop) return true;
+    // Walk straight when possible, otherwise follow an A* path around cover.
+    let tx = x, tz = z;
+    const room = w.s.room;
+    if (room && !walkLine(room, h.x, h.z, x, z, h.radius * 0.9)) {
+      if (--mem.repath <= 0 || !mem.path.length) {
+        mem.path = findPath(room, h.x, h.z, x, z);
+        mem.repath = 30;
+      }
+      while (mem.path.length && Math.hypot(mem.path[0]!.x - h.x, mem.path[0]!.z - h.z) < 0.4) mem.path.shift();
+      if (mem.path[0]) { tx = mem.path[0].x; tz = mem.path[0].z; }
+    } else mem.path = [];
+    const dx = tx - h.x, dz = tz - h.z, d = Math.hypot(dx, dz) || 1;
     mx = dx / d;
     mz = dz / d;
     return false;

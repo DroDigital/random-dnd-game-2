@@ -202,13 +202,15 @@ export class PostChain {
    */
   render(r: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.OrthographicCamera, remainder: THREE.Vector2, outW: number, outH: number, uiDirty: boolean): void {
     const t = this.toggles;
-    // 1. Scene colour + depth (opaque layer 0 only).
+    // 1. Scene colour + depth (opaque layer 0, plus layer 2 = colour-only extras like identity rims).
     camera.layers.set(0);
+    camera.layers.enable(2);
     r.setRenderTarget(this.rtScene);
     r.setClearColor(0x14121c, 1);
     r.clear();
     r.render(scene, camera);
     // 2. Normals.
+    camera.layers.set(0);
     if (t.outline) {
       const bg = scene.background;
       scene.background = null;

@@ -219,6 +219,7 @@ export class World {
   heal(h: Hero, amount: number, source: Hero | null): number {
     if (h.fallen) return 0;
     if (source) amount += source.mods.healBonus + (source.mods.sub.healBonus ?? 0);
+    amount = Math.round(amount * BALANCE.realtime.healScale);
     if (h.down) {
       this.revive(h, amount);
     } else {

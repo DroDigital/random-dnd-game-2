@@ -64,3 +64,35 @@ Running log of decisions, findings and gotchas. Newest last.
   Cunning Hide, Spiritual Weapon). Interact is hold-to-stabilize (or toggle in accessibility).
 - Autoplay demo: `?demo=4&seed=5&speed=6` (or `--demo=4 --seed=5 --speed=6` in Electron) runs an
   all-AI party with the full UI; used by e2e tests and for screenshots.
+
+## Step 7 — balance simulator
+
+- `npm run balance` runs N seeded headless runs per party size in `worker_threads` (each worker
+  loads TypeScript through `--import tsx`). All heroes are driven by the companion AI and menus by
+  `src/sim/bot.ts`, so win rates measure the AI, not people; use them to compare tunings.
+- **Real-time scaling** (`balance.json → realtime`): SRD numbers assume one attack per 6 s round, so
+  hero HP and healing ×2.8, enemy HP ×5 (bosses a further ×3), hero attack tempo ×1.8 and enemy
+  cooldowns ×1.3. Encounter XP budgets then scale per party size
+  (`encounter.partySizeMultiplier`), boss HP likewise (`enemy.bossHpByPartySize`), and the Lone Hero
+  gets ×1.4 HP plus the extra death save.
+- **Bugs the simulator found**: the "collapsing floor" twist crashed with nobody standing; heroes and
+  enemies walked into the same crate from opposite sides forever (sight lines ignore cover, but
+  movement must not: `walkLine` vs `lineOfSight`, and companions now use A*); spawn rings could put
+  enemies inside walls (spawns snap to walkable cells, anything inside geometry is popped out, and
+  the DM drags stragglers into a fight that runs past 150 s); a downed Lone Hero ended the run before
+  rolling a single death save (a TPK now needs nobody standing **and** nobody still rolling).
+
+## Step 8 — polish and legal review
+
+- **Legal sweep** (`grep -rniE "dungeons ?& ?dragons|d&d|wizards of the coast|dungeon master"`): the
+  only hit is the SRD 5.2 attribution sentence in `CREDITS.md`, which CC BY 4.0 requires verbatim
+  (it names the licensor; it is not branding). The in-game persona picker says "Game Master"
+  instead of "Dungeon Master"; "DM" is used as the generic abbreviation. Monster names come from the
+  SRD 5.2 (Owlbear, Young Black Dragon, Lich, Mimic, Wight…). Second subclasses that are not in the
+  SRD are original (Shieldwarden, Pyromancer, Shadowblade, Grave Warden, …).
+- pixelfx is MIT: licence and NOTICE ship in `LICENSES/`; its non-MIT Patch Pixel font is never
+  copied. KayKit and Ninja Adventure are CC0 (the NinjaAdventure repo has no LICENSE file; CC0 per the
+  author's itch.io page).
+- **Draw calls**: the static room is merged into one mesh per material once the drop-in finishes
+  (447 → 236 calls in the look test), and identity rims live on a colour-only layer so the normals
+  pass skips them.

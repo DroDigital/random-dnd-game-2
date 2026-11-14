@@ -24,6 +24,37 @@ export function lineOfSight(room: RoomState, ax: number, az: number, bx: number,
   return true;
 }
 
+/** Nearest walkable cell centre to (x, z) (the point itself if it is already walkable). */
+export function nearestWalkable(room: RoomState, x: number, z: number): { x: number; z: number } {
+  if (!isBlocked(room, x, z)) return { x, z };
+  const cx = Math.floor(x), cz = Math.floor(z);
+  for (let r = 1; r < Math.max(room.w, room.h); r++) {
+    let best: { x: number; z: number } | null = null, bd = Infinity;
+    for (let dz = -r; dz <= r; dz++) for (let dx = -r; dx <= r; dx++) {
+      if (Math.max(Math.abs(dx), Math.abs(dz)) !== r) continue;
+      const nx = cx + dx, nz = cz + dz;
+      if (nx < 0 || nz < 0 || nx >= room.w || nz >= room.h || !walkable(room.cells[nz * room.w + nx])) continue;
+      const d = (nx + 0.5 - x) ** 2 + (nz + 0.5 - z) ** 2;
+      if (d < bd) { bd = d; best = { x: nx + 0.5, z: nz + 0.5 }; }
+    }
+    if (best) return best;
+  }
+  return { x, z };
+}
+
+/** Can an actor of `radius` walk straight from a to b? Cover blocks movement (unlike sight). */
+export function walkLine(room: RoomState, ax: number, az: number, bx: number, bz: number, radius = 0.35): boolean {
+  const d = Math.hypot(bx - ax, bz - az);
+  const steps = Math.ceil(d / 0.2);
+  const nx = d > 0 ? -(bz - az) / d : 0, nz = d > 0 ? (bx - ax) / d : 0;
+  for (let i = 1; i <= steps; i++) {
+    const t = i / steps;
+    const x = ax + (bx - ax) * t, z = az + (bz - az) * t;
+    for (const o of [0, radius, -radius]) if (!walkable(cellAt(room, x + nx * o, z + nz * o))) return false;
+  }
+  return true;
+}
+
 /**
  * A* over the 1 m nav grid with 8-way moves (no corner cutting). Returns cell-centre waypoints
  * from start (exclusive) to goal (inclusive), simplified with line-of-sight string pulling.
@@ -101,7 +132,7 @@ export function findPath(room: RoomState, sx: number, sz: number, gx: number, gz
   let ax = sx, az = sz;
   for (let i = 0; i < pts.length; i++) {
     const next = pts[i + 1];
-    if (next && lineOfSight(room, ax, az, next.x, next.z)) continue;
+    if (next && walkLine(room, ax, az, next.x, next.z)) continue;
     out.push(pts[i]!);
     ax = pts[i]!.x;
     az = pts[i]!.z;

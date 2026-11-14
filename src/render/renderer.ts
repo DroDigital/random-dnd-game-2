@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import { ACTS, MODELS, type ActDef } from "../data";
 import type { Assets, ModelInstance } from "./assets";
 import { DioramaCamera, LOW_H } from "./camera";
@@ -82,6 +83,7 @@ export class GameRenderer {
     this.renderer.setPixelRatio(1);
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.autoClear = true;
+    this.renderer.info.autoReset = false; // count every pass of a frame, not just the last one
     this.scene.background = new THREE.Color(PAL.ink);
     this.lights = new LightPool(this.scene);
     this.hemi = new THREE.HemisphereLight(0x8a80b0, 0x2a2438, 1.4);
@@ -124,6 +126,7 @@ export class GameRenderer {
     this.roomKey = key;
     this.roomGroup.clear();
     this.drops = [];
+    this.merged = false;
     this.torches = [];
     this.clearActors();
     if (!room) return;
@@ -197,6 +200,49 @@ export class GameRenderer {
     this.candle.set(room.w + 1.6, 0, room.h + 0.5);
     this.candleObj?.position.copy(this.candle);
     this.dice.forEach((d, i) => d.position.set(room.w + 0.5 + (i % 2) * 0.9, 0.3, room.h - 1.8 + Math.floor(i / 2) * 0.9));
+  }
+
+  private merged = false;
+  /**
+   * Once every tile has landed, bake the static room into one mesh per material: hundreds of
+   * prop meshes (drawn twice, colour + normals) become a handful of draw calls.
+   */
+  private mergeRoom(): void {
+    this.merged = true;
+    this.roomGroup.updateMatrixWorld(true);
+    const buckets = new Map<THREE.Material, THREE.BufferGeometry[]>();
+    const keep: THREE.Object3D[] = [];
+    this.roomGroup.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (!m.isMesh || (m as THREE.SkinnedMesh).isSkinnedMesh || Array.isArray(m.material)) return;
+      const g = m.geometry.index ? m.geometry.toNonIndexed() : m.geometry.clone();
+      for (const name of Object.keys(g.attributes)) if (!["position", "normal", "uv"].includes(name)) g.deleteAttribute(name);
+      if (!g.attributes.normal) g.computeVertexNormals();
+      if (!g.attributes.uv) g.setAttribute("uv", new THREE.Float32BufferAttribute(new Float32Array(g.attributes.position!.count * 2), 2));
+      g.applyMatrix4(m.matrixWorld);
+      const list = buckets.get(m.material) ?? [];
+      list.push(g);
+      buckets.set(m.material, list);
+    });
+    if (!buckets.size) return;
+    // Group by texture so props that share KayKit's atlas share one draw call.
+    const byKey = new Map<string, { mat: THREE.Material; geos: THREE.BufferGeometry[] }>();
+    for (const [mat, geos] of buckets) {
+      const tm = mat as THREE.MeshToonMaterial;
+      const key = `${tm.map?.source.uuid ?? "none"}:${tm.color?.getHexString() ?? ""}:${tm.transparent}`;
+      const e = byKey.get(key) ?? { mat, geos: [] };
+      e.geos.push(...geos);
+      byKey.set(key, e);
+    }
+    const merged: THREE.Mesh[] = [];
+    for (const { mat, geos } of byKey.values()) {
+      const g = mergeGeometries(geos, false);
+      if (g) merged.push(new THREE.Mesh(g, mat));
+      for (const x of geos) x.dispose();
+    }
+    this.roomGroup.clear();
+    for (const m of merged) this.roomGroup.add(m);
+    for (const k of keep) this.roomGroup.add(k);
   }
 
   /** Finish every pending drop-in immediately (screenshots, tests). */
@@ -485,6 +531,7 @@ export class GameRenderer {
   /** Render one frame through the post chain. */
   render(outW: number, outH: number, dt: number, uiDirty: boolean): void {
     const t0 = performance.now();
+    this.renderer.info.reset();
     // Drop-in room tiles with dust.
     for (const d of this.drops) {
       if (d.t >= 1) continue;
@@ -498,6 +545,7 @@ export class GameRenderer {
         if (Math.random() < 0.07) this.vfx.spawn("dust", new THREE.Vector3(d.obj.position.x, 0.1, d.obj.position.z), { scale: 0.6, opacity: 0.8 });
       }
     }
+    if (!this.merged && this.drops.length && this.drops.every((d) => d.t >= 1)) this.mergeRoom();
     // Lights: candle, torches, then VFX borrow the rest.
     const flick = (k: number): number => 1 + Math.sin(this.time * 11 + k) * 0.08 + Math.sin(this.time * 23 + k * 3) * 0.05;
     this.lights.request({ x: this.candle.x, y: 1.6, z: this.candle.z, color: PAL.amber, intensity: 45 * flick(0), range: 24, priority: 10 });

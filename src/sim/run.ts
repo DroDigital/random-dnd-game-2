@@ -48,7 +48,16 @@ export function createRun(cfg: RunConfig): SimState {
     hitstop: 0,
   };
   const w = new WorldLite(s);
-  for (const h of cfg.heroes) s.heroes.push(makeHero(s.nextId++, h.slot, h.cls, { ctrl: h.ctrl, background: h.background, perm: s.run.unlocked.perm }));
+  for (const h of cfg.heroes) {
+    const hero = makeHero(s.nextId++, h.slot, h.cls, { ctrl: h.ctrl, background: h.background, perm: s.run.unlocked.perm });
+    if (cfg.mode === "lone") {
+      // The Lone Hero is a little tougher (and gets an extra death save, see World.failLimit).
+      hero.tags.push("lone");
+      recalc(hero, s.run.unlocked.perm);
+      hero.hp = hero.maxHp;
+    }
+    s.heroes.push(hero);
+  }
   s.run.map = generateActMap(w.rng, 0);
   return s;
 }
@@ -87,7 +96,7 @@ function budgetFor(w: World, kind: "encounter" | "elite" | "boss" | "ambush"): n
   const run = w.s.run;
   const levels = w.s.heroes.filter((h) => !h.fallen).map((h) => h.level);
   const diff = BALANCE.encounter.difficulty[kind] as Difficulty;
-  let mult = BALANCE.encounter.multiplier * w.persona.budgetMult;
+  let mult = BALANCE.encounter.multiplier * w.persona.budgetMult * BALANCE.encounter.partySizeMultiplier[Math.min(3, levels.length - 1)]!;
   if (run.mode === "lone") mult *= BALANCE.encounter.loneHeroMultiplier;
   if (run.mode === "party") mult *= BALANCE.encounter.companionMultiplier;
   if (run.persona === "killer") mult *= 1 + (w.persona.tierBudget ?? 0.12) * run.killerTier;
@@ -296,8 +305,7 @@ function roomCleared(w: World): void {
   for (let i = 0; i < items; i++) queueLoot(w, randomItem(w));
   if (run.loot.length) run.phase = "loot";
   if (kind === "boss") {
-    const boss = s.enemies.find((e) => e.boss);
-    run.ttk.push({ boss: boss?.type ?? "boss", ticks: s.tick - room.startTick });
+    run.ttk.push({ boss: ACTS.acts[run.act]!.boss, ticks: s.tick - room.startTick });
   }
 }
 
@@ -383,6 +391,7 @@ function applyCampfire(w: World, h: Hero, choice: "rest" | "upgrade", ability?: 
       h.hitDice--;
       healed += Math.max(1, w.rng.die(die) + Math.floor((h.scores.con - 10) / 2));
     }
+    healed = Math.round(healed * BALANCE.realtime.healScale);
     h.hp = Math.min(h.maxHp, h.hp + healed);
     if (h.cls === "wizard") h.slots = Math.min(maxSlots(h), h.slots + Math.ceil(h.level / 2)); // Arcane Recovery
     h.inspiration = Math.min(3, h.inspiration + h.mods.inspirationOnRest);
@@ -556,9 +565,10 @@ export function updateRun(w: World): void {
   if (s.room && s.room.fight && !s.room.cleared && run.phase === "room") {
     if (w.enemiesAlive().length === 0) roomCleared(w);
   }
-  // Total party kill: nobody left standing.
+  // Total party kill: nobody standing and nobody left who could still roll their way back up.
   const standing = s.heroes.some((h) => !h.fallen && !h.down && h.hp > 0);
-  if (!standing && s.heroes.length) {
+  const rolling = s.heroes.some((h) => !!h.down && !h.stable && !h.fallen);
+  if (!standing && !rolling && s.heroes.length) {
     run.phase = "defeat";
     run.ended = { victory: false, tick: s.tick };
     w.narrate("tpk");

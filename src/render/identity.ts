@@ -53,6 +53,7 @@ export function addRim(root: THREE.Object3D, color: string, width = 0.018): THRE
     }
     rim.frustumCulled = false;
     rim.name = "rim";
+    rim.layers.set(2); // colour pass only: no need for rims in the normals/outline pass
     m.parent?.add(rim);
     rim.position.copy(m.position);
     rim.quaternion.copy(m.quaternion);
