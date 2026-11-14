@@ -86,20 +86,31 @@ export class Hud {
   }
 
   /** DM narration in a typewriter box at the top. */
-  drawNarration(): void {
+  private narrLayout(): { lines: string[]; size: number; h: number } | null {
     const n = this.narr;
-    if (!n.text) return;
-    const d = this.d;
+    if (!n.text) return null;
     const size = this.largeText ? 16 : 8;
-    const lines = d.wrap(n.text, 300, size);
-    const h = 10 + lines.length * (size + 3);
-    d.panel(70, 2, 320, h, "nine_path_4");
-    d.text("DM", 78, 6, PAL.wine, 8);
-    let left = Math.floor(n.shown);
-    lines.forEach((ln, i) => {
+    const lines = this.d.wrap(n.text, 284, size);
+    return { lines, size, h: 12 + lines.length * (size + 3) };
+  }
+
+  /** Bottom edge of the narration box (0 when hidden), so other top-of-screen UI can sit below it. */
+  narrationBottom(): number {
+    const l = this.narrLayout();
+    return l ? 2 + l.h : 0;
+  }
+
+  drawNarration(): void {
+    const l = this.narrLayout();
+    if (!l) return;
+    const d = this.d;
+    d.panel(90, 2, 300, l.h, "nine_path_4");
+    d.text("DM", 98, 8, PAL.wine, 8, "left", false);
+    let left = Math.floor(this.narr.shown);
+    l.lines.forEach((ln, i) => {
       const part = ln.slice(0, Math.max(0, left));
       left -= ln.length + 1;
-      d.text(part, 94, 6 + i * (size + 3), PAL.bone, size);
+      d.text(part, 116, 8 + i * (l.size + 3) - (l.size > 8 ? 2 : 0), PAL.bone, l.size, "left", false);
     });
   }
 
@@ -125,12 +136,17 @@ export class Hud {
   drawLog(): void {
     if (!this.showLog) return;
     const d = this.d;
-    const n = Math.min(this.log.length, 16);
-    d.panel(UI_W - 236, 30, 232, 14 + n * 11, "nine_path_4");
-    d.text("Roll log (Tab)", UI_W - 228, 34, PAL.amber, 8);
+    // Sits under the top bar / narration and stops above the hero panels.
+    const top = Math.max(26, this.narrationBottom() + 2);
+    const room = Math.floor((UI_H - 46 - top - 22) / 11);
+    const n = Math.max(0, Math.min(this.log.length, 16, room));
+    const w = 250, x = UI_W - w - 2;
+    d.panel(x, top, w, 22 + n * 11, "nine_path_4");
+    d.text("Roll log (Tab)", x + 8, top + 6, PAL.amber, 8, "left", false);
     this.log.slice(-n).forEach((l, i) => {
-      if (l.slot >= 0) d.shape(PLAYER_IDENTITY[l.slot % 4]!.shape, UI_W - 226, 50 + i * 11, 3, this.idColor(l.slot));
-      d.text(l.text.length > 46 ? `${l.text.slice(0, 45)}…` : l.text, UI_W - 220, 46 + i * 11, l.color, 8, "left", false);
+      const y = top + 18 + i * 11;
+      if (l.slot >= 0) d.shape(PLAYER_IDENTITY[l.slot % 4]!.shape, x + 10, y + 4, 3, this.idColor(l.slot));
+      d.text(d.fit(l.text, w - 26), x + 16, y, l.color, 8, "left", false);
     });
   }
 
@@ -156,41 +172,48 @@ export class Hud {
     d.ring(cx, cy, 13, clockFraction(h.clock), PAL.amber);
     d.shape(id.shape, x + 6, y + 6, 3, col);
     // Name + HP.
-    d.text(`${CLASSES[h.cls]!.name} ${h.level}${label === "AI" ? " (AI)" : ""}`, x + 31, y + 3, col, 8, "left");
+    // Text column starts right of the clock ring (ring spans x+4..x+30).
+    const tx = x + 34, tw = w - 34 - 5;
+    d.text(d.fit(`${CLASSES[h.cls]!.name} ${h.level}${label === "AI" ? " (AI)" : ""}`, tw), tx, y + 4, col, 8, "left");
     if (h.fallen) {
-      d.text("FALLEN", x + 31, y + 15, PAL.blood, 8);
-      d.text("back at camp", x + 31, y + 25, PAL.fog, 8);
+      d.text("FALLEN", tx, y + 15, PAL.blood, 8);
+      d.text(d.fit("back at camp", tw), tx, y + 25, PAL.fog, 8);
       return;
     }
     if (h.down) {
       const ds = h.down.saves;
-      d.text(h.stable ? "STABLE" : "DOWNED", x + 31, y + 14, h.stable ? PAL.leaf : PAL.blood, 8);
+      d.text(h.stable ? "STABLE" : "DOWNED", tx, y + 14, h.stable ? PAL.leaf : PAL.blood, 8);
       for (let i = 0; i < 3; i++) {
-        d.rect(x + 76 + i * 8, y + 15, 6, 6, i < ds.successes ? PAL.leaf : PAL.ink);
-        d.rect(x + 76 + i * 8, y + 25, 6, 6, i < ds.failures ? PAL.blood : PAL.ink);
+        d.rect(x + w - 30 + i * 8, y + 15, 6, 6, i < ds.successes ? PAL.leaf : PAL.ink);
+        d.rect(x + w - 30 + i * 8, y + 25, 6, 6, i < ds.failures ? PAL.blood : PAL.ink);
       }
-      if (!h.stable) d.bar(x + 31, y + 27, 40, 3, 1 - h.down.timer / 180, PAL.fog);
+      if (!h.stable) d.bar(tx, y + 27, 40, 3, 1 - h.down.timer / 180, PAL.fog);
       return;
     }
-    d.bar(x + 31, y + 15, 48, 6, h.hp / h.maxHp, h.hp / h.maxHp < 0.3 ? PAL.blood : PAL.leaf);
-    if (h.tempHp > 0) d.bar(x + 31, y + 15, Math.min(48, (h.tempHp / h.maxHp) * 48), 2, 1, PAL.sky);
-    d.text(`${Math.max(0, h.hp)}/${h.maxHp}`, x + w - 4, y + 13, PAL.bone, 8, "right");
+    // HP bar fills whatever the HP text leaves free.
+    const hpText = `${Math.max(0, h.hp)}/${h.maxHp}`;
+    const bw = Math.max(20, Math.floor(x + w - 5 - d.width(hpText) - 4 - tx));
+    d.bar(tx, y + 16, bw, 5, h.hp / h.maxHp, h.hp / h.maxHp < 0.3 ? PAL.blood : PAL.leaf);
+    if (h.tempHp > 0) d.bar(tx, y + 16, Math.min(bw, (h.tempHp / h.maxHp) * bw), 2, 1, PAL.sky);
+    d.text(hpText, x + w - 5, y + 14, PAL.bone, 8, "right");
     // Action / Bonus / Reaction pips.
     const pip = (px: number, on: boolean, ch: string, c: string): void => {
       d.rect(px, y + 25, 9, 9, on ? c : PAL.ink);
       d.text(ch, px + 2, y + 25, on ? PAL.ink : PAL.mist, 8, "left", false);
     };
-    pip(x + 31, h.clock.action, "A", PAL.blood);
-    pip(x + 42, h.clock.bonus, "B", PAL.sky);
-    pip(x + 53, h.clock.reaction, "R", PAL.gold);
-    // Inspiration, potions, spell slots.
-    for (let i = 0; i < h.inspiration; i++) d.shape("diamond", x + 68 + i * 6, y + 29, 2, PAL.gold);
-    d.rect(x + 86, y + 26, 4, 6, PAL.blood);
-    d.text(`${h.potions}`, x + 92, y + 25, PAL.bone, 8, "left", false);
+    pip(tx, h.clock.action, "A", PAL.blood);
+    pip(tx + 11, h.clock.bonus, "B", PAL.sky);
+    pip(tx + 22, h.clock.reaction, "R", PAL.gold);
+    // Inspiration, potions, spell slots (right-aligned so they never touch the frame).
+    for (let i = 0; i < Math.min(3, h.inspiration); i++) d.shape("diamond", tx + 37 + i * 6, y + 29, 2, PAL.gold);
+    const rx = x + w - 6;
     if (h.cls === "wizard") {
-      d.rect(x + 100, y + 27, 4, 4, PAL.sky);
-      d.text(`${h.slots}`, x + 106, y + 25, PAL.bone, 8, "left", false);
+      d.text(`${h.slots}`, rx, y + 25, PAL.bone, 8, "right", false);
+      d.rect(rx - d.width(`${h.slots}`) - 6, y + 27, 4, 4, PAL.sky);
     }
+    const px = h.cls === "wizard" ? rx - 16 : rx;
+    d.text(`${h.potions}`, px, y + 25, PAL.bone, 8, "right", false);
+    d.rect(px - d.width(`${h.potions}`) - 6, y + 26, 4, 6, PAL.blood);
     void ITEMS;
   }
 }

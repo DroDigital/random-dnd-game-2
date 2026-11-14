@@ -91,7 +91,9 @@ Reactions only work while an enemy is telegraphing (a red/gold marker on the gro
 Useful URL / command-line switches (dev server query or `electron . --x=y`):
 `--look=on|off|fireball|act2|act3|finale|finale-boss` (look test rooms),
 `--demo=4 --seed=5 --speed=6` (AI party autoplays with the full UI), `--launcher`, `--skip-launcher`,
-`--steam`. Hold **Shift** while the game starts to reopen the launcher.
+`--steam`, `?ui=<screen>` (a frozen UI test scene: tavern, intro, map, room, init, levelup, campfire,
+merchant, skill, loot, pause, summary, shop, hall, credits, large; `npx tsx scripts/dev/ui-gallery.ts <dir>`
+screenshots them all from the dev server). Hold **Shift** while the game starts to reopen the launcher.
 
 ## Launcher
 

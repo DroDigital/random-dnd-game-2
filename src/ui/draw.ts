@@ -61,13 +61,35 @@ export class Draw {
     g.fillStyle = color;
     g.fillText(s, Math.round(x), Math.round(y));
   }
+  /** Text on a solid backing plate, for anything drawn over the busy 3D scene. Returns the plate width. */
+  label(s: string, x: number, y: number, color: string = PAL.bone, size = 8, align: CanvasTextAlign = "left", maxW = UI_W - 8): number {
+    const t = this.fit(s, maxW - 6, size);
+    const w = Math.ceil(this.width(t, size)) + 6;
+    const left = align === "center" ? x - w / 2 : align === "right" ? x - w : x;
+    const lx = Math.max(0, Math.min(UI_W - w, Math.round(left)));
+    this.rect(lx, y - 2, w, size + 4, PAL.ink);
+    this.rect(lx + 1, y - 1, w - 2, size + 2, PAL.night);
+    this.text(t, lx + 3, y, color, size, "left", false);
+    return w;
+  }
+  /** Truncate with an ellipsis so the text fits `maxW` pixels. */
+  fit(s: string, maxW: number, size = 8): string {
+    if (this.width(s, size) <= maxW) return s;
+    let lo = 0, hi = s.length;
+    while (lo < hi) {
+      const mid = (lo + hi + 1) >> 1;
+      if (this.width(`${s.slice(0, mid)}...`, size) <= maxW) lo = mid;
+      else hi = mid - 1;
+    }
+    return `${s.slice(0, lo).trimEnd()}...`;
+  }
   width(s: string, size = 8): number {
     this.font(size);
     return this.g.measureText(s).width;
   }
-  /** Word-wrap into lines no wider than `w`. */
+  /** Word-wrap into lines no wider than `w` (over-long words are truncated, never overflow). */
   wrap(s: string, w: number, size = 8): string[] {
-    const words = s.split(/\s+/);
+    const words = s.split(/\s+/).filter(Boolean);
     const lines: string[] = [];
     let cur = "";
     for (const word of words) {
@@ -78,7 +100,17 @@ export class Draw {
       } else cur = t;
     }
     if (cur) lines.push(cur);
-    return lines;
+    return lines.map((l) => this.fit(l, w, size));
+  }
+  /** Wrap and draw a paragraph; returns the y below the last line. Lines past `maxLines` end in an ellipsis. */
+  para(s: string, x: number, y: number, w: number, color: string = PAL.bone, size = 8, maxLines = 99, lineH = size + 3): number {
+    let lines = this.wrap(s, w, size);
+    if (lines.length > maxLines) {
+      lines = lines.slice(0, maxLines);
+      lines[maxLines - 1] = this.fit(`${lines[maxLines - 1]}...`, w, size);
+    }
+    lines.forEach((ln, i) => this.text(ln, x, y + i * lineH, color, size, "left", false));
+    return y + lines.length * lineH;
   }
   rect(x: number, y: number, w: number, h: number, color: string): void {
     this.g.fillStyle = color;
