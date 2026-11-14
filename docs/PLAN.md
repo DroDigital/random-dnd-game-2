@@ -11,7 +11,7 @@ Build order from the brief. Each step is committed when done; status is kept cur
 | 5 | DM Director, skill checks, loot, tavern, Renown, Hall of Heroes | done |
 | 6 | Acts II–III, finale, all enemies, items, subclasses | done |
 | 7 | Balance simulator (1,000 seeded headless runs per party size) | done |
-| 8 | Accessibility, Steam, final credits, legal review | todo |
+| 8 | Accessibility, Steam, final credits, legal review | done |
 
 ## Architecture
 
@@ -26,3 +26,6 @@ Build order from the brief. Each step is committed when done; status is kept cur
 - `src/ui/` everything drawn on the 480×270 UI canvas.
 - `src/launcher/` the launcher window (DOM).
 - `scripts/` asset fetch / build / VFX export, balance simulator, icon.
+
+See `docs/REPORT.md` for the final report (done / placeholder / known bugs / tuning / installer
+sizes) and `docs/BALANCE.md` for the latest balance run.

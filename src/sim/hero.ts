@@ -98,7 +98,7 @@ export function recalc(h: Hero, perm: Record<string, number> = {}): void {
   const con = abilityMod(scores.con), dex = abilityMod(scores.dex);
   const perLevel = c.hitDie / 2 + 1 + con;
   const oldMax = h.maxHp;
-  h.maxHp = Math.max(1, Math.round((c.hitDie + con + (h.level - 1) * perLevel + h.mods.maxHp + h.mods.maxHpPerLevel * h.level) * BALANCE.realtime.heroHpScale * (h.tags.includes("lone") ? BALANCE.hero.loneHpMult : 1)));
+  h.maxHp = Math.max(1, Math.round((c.hitDie + con + (h.level - 1) * perLevel + h.mods.maxHp + h.mods.maxHpPerLevel * h.level) * BALANCE.realtime.heroHpScale * (h.tags.includes("lone") ? BALANCE.hero.loneHpMult * (10 / c.hitDie) : 1)));
   if (oldMax > 0) h.hp = Math.min(h.maxHp, Math.max(h.hp + (h.maxHp - oldMax), h.hp > 0 ? 1 : 0));
   else h.hp = h.maxHp;
   h.ac = c.armorAc + Math.min(dex, c.dexCap) + h.mods.ac;

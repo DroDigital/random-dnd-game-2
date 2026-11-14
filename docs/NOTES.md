@@ -96,3 +96,7 @@ Running log of decisions, findings and gotchas. Newest last.
 - **Draw calls**: the static room is merged into one mesh per material once the drop-in finishes
   (447 → 236 calls in the look test), and identity rims live on a colour-only layer so the normals
   pass skips them.
+- **AI fixes found by the solo balance pass**: a one-tick "hold" never pressed the button, so AI
+  heroes never drank potions (solo win rate 28% → 53% once fixed); ranged AI kept trying to back away
+  into walls instead of casting; the mid-act level-up now also happens halfway up the map, so short
+  Act I paths don't reach the Wight at level 1.

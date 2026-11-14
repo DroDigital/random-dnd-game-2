@@ -329,7 +329,9 @@ export function updateEnemy(w: World, e: Enemy): void {
       }
       const def = ENEMIES[e.type]!;
       const d = w.dist(e, t);
-      if ((def.ai === "ranged" || def.ai === "caster") && d < 5) {
+      // Late in a long fight, kiters stop kiting so a lone melee hero can always finish the room.
+      const late = !!w.s.room && w.s.tick - w.s.room.startTick > sec(150);
+      if ((def.ai === "ranged" || def.ai === "caster") && d < 5 && !late) {
         const v = dir(t, e);
         moveToward(w, e, { x: e.x + v.x * 2, z: e.z + v.z * 2 }, speedMul);
       } else if ((def.ai === "ranged" || def.ai === "caster") && d < 10 && lineOfSight(w.s.room!, e.x, e.z, t.x, t.z)) {
@@ -372,7 +374,7 @@ export function updateEnemy(w: World, e: Enemy): void {
     default: {
       e.vx = e.vz = 0;
       const def = ENEMIES[e.type]!;
-      if (def.ai === "skirmisher" && t && ai.t > 10) {
+      if (def.ai === "skirmisher" && t && ai.t > 10 && !(w.s.room && w.s.tick - w.s.room.startTick > sec(150))) {
         const v = dir(t, e);
         moveToward(w, e, { x: e.x + v.x * 2, z: e.z + v.z * 2 }, 1.1);
       }

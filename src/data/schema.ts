@@ -29,7 +29,7 @@ export const BalanceSchema = z.object({
   }),
   enemy: z.object({
     radius: z.number(), repathTicks: z.number().int(), aggroRange: z.number(), leashRange: z.number(), separation: z.number(),
-    hitstunTicks: z.number().int(), eliteHpMult: z.number(), eliteDamageBonus: z.number(), bossHpByPartySize: z.array(z.number()).length(4),
+    hitstunTicks: z.number().int(), eliteHpMult: z.number(), eliteDamageBonus: z.number(), bossHpByPartySize: z.array(z.number()).length(4), damageByPartySize: z.array(z.number()).length(4),
     solo: z.object({ hpMult: z.number() }),
   }),
   initiativeBreak: z.object({ planTicks: z.number().int(), moveTiles: z.number(), maxPerBoss: z.number().int(), resolveTicksPerTurn: z.number().int(), eliteBreaks: z.number().int() }),

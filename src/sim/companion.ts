@@ -97,7 +97,7 @@ export function companionInput(w: World, h: Hero, skill = 0.75): InputFrame {
   // 3. Self-care.
   if (h.hp < h.maxHp * 0.3 && h.potions > 0 && h.state !== "windup") {
     mem.hold = "interact";
-    mem.holdT = 1;
+    mem.holdT = 2; // press for one tick, release on the next (a holdT of 1 never pressed)
     return finish();
   }
 
@@ -174,7 +174,10 @@ export function companionInput(w: World, h: Hero, skill = 0.75): InputFrame {
     return finish();
   }
   if (ranged) {
-    if (d < 4) go(h.x + (h.x - target.x), h.z + (h.z - target.z), 0);
+    // Back off from melee when there's room to; otherwise just keep casting.
+    const awayX = h.x + (h.x - target.x), awayZ = h.z + (h.z - target.z);
+    const room = w.s.room;
+    if (d < 3.5 && room && walkLine(room, h.x, h.z, h.x + (awayX - h.x) * 0.5, h.z + (awayZ - h.z) * 0.5, h.radius)) go(awayX, awayZ, 0);
     else if (d > (c.attack.range ?? 12) * 0.7) go(target.x, target.z, 0);
     if (d <= (c.attack.range ?? 12) * 0.8 && h.state !== "windup") {
       h.facing = Math.atan2(target.x - h.x, target.z - h.z);

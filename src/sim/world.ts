@@ -134,6 +134,10 @@ export class World {
     if (this.isHero(target) && target.fallen) return 0;
     if (target.kind === "summon") return 0;
     let dmg = amount;
+    // Bigger parties face harder-hitting foes (enemy counts are capped, so budget alone can't keep up).
+    if (this.isHero(target) && source && source.team === "foe") {
+      dmg = Math.round(dmg * BALANCE.enemy.damageByPartySize[Math.min(3, this.s.heroes.length - 1)]!);
+    }
     if (target.resist.includes(type)) dmg = Math.floor(dmg / 2);
     if (this.isHero(target) && target.buffs.rage && ["slashing", "piercing", "bludgeoning"].includes(type)) dmg = Math.floor(dmg / 2);
     if (target.tempHp > 0) {

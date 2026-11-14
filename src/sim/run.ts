@@ -371,11 +371,11 @@ function completeNode(w: World): void {
     w.emit({ t: "achievement", id: `act_${run.act}` });
     return;
   }
-  if (node.kind === "encounter" || node.kind === "elite") {
-    run.fights++;
-    const target = act.levels[0] + 1;
-    if (run.fights === BALANCE.leveling.fightsPerMidLevel && target < act.levels[1] + 0) levelUpParty(w, target);
-  }
+  if (node.kind === "encounter" || node.kind === "elite") run.fights++;
+  // Mid-act level: after enough fights, or at the latest halfway up the map (short maps, lucky paths).
+  const mid = act.levels[0] + 1;
+  const behind = s.heroes.some((h) => !h.fallen && h.level < mid);
+  if (mid < act.levels[1] && behind && (run.fights >= BALANCE.leveling.fightsPerMidLevel || node.row >= Math.floor(act.rows / 2))) levelUpParty(w, mid);
   if (run.phase !== "levelup") run.phase = "map";
 }
 
