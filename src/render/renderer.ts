@@ -46,6 +46,8 @@ export class GameRenderer {
   readonly vfx: VfxSystem;
   private roomGroup = new THREE.Group();
   readonly mapView: MapView;
+  private hemi: THREE.HemisphereLight;
+  private moon: THREE.DirectionalLight;
   mapMode = false;
   private actorsGroup = new THREE.Group();
   private fxGroup = new THREE.Group();
@@ -82,8 +84,10 @@ export class GameRenderer {
     this.renderer.autoClear = true;
     this.scene.background = new THREE.Color(PAL.ink);
     this.lights = new LightPool(this.scene);
-    this.scene.add(new THREE.HemisphereLight(0x8a80b0, 0x2a2438, 1.4));
+    this.hemi = new THREE.HemisphereLight(0x8a80b0, 0x2a2438, 1.4);
+    this.scene.add(this.hemi);
     const moon = new THREE.DirectionalLight(0x9aa8dd, 0.9);
+    this.moon = moon;
     moon.position.set(-10, 20, 6);
     this.scene.add(moon);
     this.post = new PostChain(uiCanvas);
@@ -124,6 +128,12 @@ export class GameRenderer {
     this.clearActors();
     if (!room) return;
     const act: ActDef = ACTS.acts[actIndex] ?? ACTS.acts[0]!;
+    // Each act has its own ambient mood: crypt violet, wildwood moss, sunken keep blue, vault purple.
+    const mood: Record<string, [number, number, number]> = { crypt: [0x8a80b0, 0x2a2438, 0x9aa8dd], wild: [0x86b48c, 0x2a3828, 0xb8d0a0], keep: [0x6f94c4, 0x1c2a3a, 0x8fb4e8], vault: [0xa486c4, 0x2a1838, 0xc0a0e0] };
+    const [sky, ground, moonCol] = mood[act.setting] ?? mood.crypt!;
+    this.hemi.color.setHex(sky);
+    this.hemi.groundColor.setHex(ground);
+    this.moon.color.setHex(moonCol);
     this.roomOrigin.set(0, 0, 0);
     const place = (name: string, p: RoomProp, scale = DUNGEON, yOff = 0): THREE.Object3D => {
       const o = this.assets.prop(name);

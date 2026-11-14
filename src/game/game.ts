@@ -143,7 +143,10 @@ export class Game {
 
   private async lookTest(mode: string): Promise<void> {
     this.screen = "run";
-    this.sim = lookTestSim();
+    // look=on|off|fireball (Act I room) or look=act2|act3|finale[-boss] for the later acts.
+    const m = /^(act2|act3|finale)(-boss)?$/.exec(mode);
+    const act = m ? { act2: 1, act3: 2, finale: 3 }[m[1] as "act2"] : 0;
+    this.sim = lookTestSim(7, act, !!m?.[2]);
     if (mode === "off") {
       const t = this.renderer.post.toggles;
       t.outline = t.tiltShift = t.quantize = t.dither = false;

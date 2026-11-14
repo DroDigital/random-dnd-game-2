@@ -5,7 +5,7 @@ import { Sim } from "../sim/sim";
 import { ACTS } from "../data";
 
 /** The one-room look test: four heroes and a skeleton patrol in a crypt hall. */
-export function lookTestSim(seed = 7): Sim {
+export function lookTestSim(seed = 7, act = 0, boss = false): Sim {
   const s = createRun({
     seed, persona: "storyteller", mode: "coop",
     heroes: [
@@ -15,7 +15,8 @@ export function lookTestSim(seed = 7): Sim {
   });
   const sim = new Sim(s);
   const w = sim.world;
-  s.room = buildRoom("pillars", "encounter", w.rng, ACTS.acts[0]!, 0);
+  s.run.act = act;
+  s.room = buildRoom(boss ? "throne" : "pillars", boss ? "boss" : "encounter", w.rng, ACTS.acts[act]!, 0);
   s.room.fight = true;
   s.run.phase = "room";
   s.run.map.nodes[0]!.kind = "encounter";
@@ -25,8 +26,10 @@ export function lookTestSim(seed = 7): Sim {
     h.z = sp.z - 1;
     h.facing = Math.PI;
   });
-  const types = ["skeleton", "skeleton", "skeleton_archer", "skeleton_brute", "zombie", "skeleton"];
+  const def = ACTS.acts[act]!;
+  const types = act === 0 ? ["skeleton", "skeleton", "skeleton_archer", "skeleton_brute", "zombie", "skeleton"] : def.pool.map((p) => p.id);
   s.room.enemySpawns.forEach((sp, i) => spawnEnemy(w, types[i % types.length]!, sp.x, sp.z));
-  spawnEnemy(w, "skeleton", s.room.w / 2, s.room.h / 2 - 2);
+  if (boss) spawnEnemy(w, def.boss, s.room.bossSpawns[0]!.x, s.room.bossSpawns[0]!.z);
+  else spawnEnemy(w, types[0]!, s.room.w / 2, s.room.h / 2 - 2);
   return sim;
 }
