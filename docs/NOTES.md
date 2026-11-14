@@ -16,8 +16,8 @@ Running log of decisions, findings and gotchas. Newest last.
   `ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/` and
   `ELECTRON_BUILDER_BINARIES_MIRROR=https://npmmirror.com/mirrors/electron-builder-binaries/`.
   CI uses the defaults.
-- **Shift-to-reopen launcher**: there is no API to read a held key at process start. The game window
-  listens for a Shift keydown (OS key-repeat delivers it once the window is focused) during the first
+- **Shift-to-reopen launcher**: there is no API to read a held key at process start. While the game is still loading, the game window
+  listens for a Shift keydown (OS key-repeat delivers it once the window is focused; once loaded, Right Shift is P2's join key) during the first
   1.5 s and asks main to open the launcher. `--launcher` also forces it.
 - **vsync** can only be changed before the GPU process starts, so it applies on next launch
   (`disable-gpu-vsync` + `disable-frame-rate-limit`).

@@ -575,7 +575,8 @@ export class Game {
   private onKeyDown(e: KeyboardEvent): void {
     this.audio.unlock();
     // Hold Shift while the game starts to reopen the launcher.
-    if ((e.key === "Shift") && performance.now() - this.startTime < 1500 && window.rfr && !this.opts.look) {
+    // Only while still loading: once the game is up, Right Shift is player 2's join key.
+    if (e.key === "Shift" && !this.ready && performance.now() - this.startTime < 4000 && window.rfr && !this.opts.look) {
       void window.rfr.openLauncher();
       return;
     }
