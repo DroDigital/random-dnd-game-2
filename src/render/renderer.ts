@@ -9,6 +9,7 @@ import { toonMaterial } from "./toon";
 import { d20Mesh, tableTexture, proceduralModel, type ProcModel } from "./procedural";
 import { PAL, PLAYER_IDENTITY } from "./palette";
 import { shapeRing, addRim } from "./identity";
+import { MapView } from "./mapview";
 import type { AnyActor, Hero, RoomProp, RoomState, SimEvent, SimState } from "../sim/types";
 
 const DUNGEON = MODELS.unitScale.dungeon;
@@ -44,6 +45,8 @@ export class GameRenderer {
   readonly post: PostChain;
   readonly vfx: VfxSystem;
   private roomGroup = new THREE.Group();
+  readonly mapView: MapView;
+  mapMode = false;
   private actorsGroup = new THREE.Group();
   private fxGroup = new THREE.Group();
   private actors = new Map<number, ActorVis>();
@@ -81,6 +84,9 @@ export class GameRenderer {
     this.post = new PostChain(uiCanvas);
     this.vfx = new VfxSystem(this.scene, assets);
     this.scene.add(this.roomGroup, this.actorsGroup, this.fxGroup);
+    this.mapView = new MapView(assets, this.vfx);
+    this.mapView.group.position.set(-40, 0, 0);
+    this.scene.add(this.mapView.group);
     this.buildTable();
   }
 
@@ -402,6 +408,34 @@ export class GameRenderer {
     for (const [id, o] of this.pickupVis) if (!live.has(id)) { this.fxGroup.remove(o); this.pickupVis.delete(id); }
   }
 
+  /** Show the act map on the table instead of the room. */
+  showMap(s: SimState, selected: number | null, dt: number): void {
+    this.mapMode = true;
+    this.roomGroup.visible = this.actorsGroup.visible = this.fxGroup.visible = false;
+    this.mapView.group.visible = true;
+    this.mapView.sync(s.run.map, s.run.act, selected, dt);
+    const c = this.mapView.center.clone().add(this.mapView.group.position);
+    const k = 1 - Math.exp(-dt * 3);
+    this.cam.focus.lerp(c, dt === 0 ? 1 : k);
+    this.cam.height += (13 - this.cam.height) * (dt === 0 ? 1 : k);
+    this.candle.set(c.x + 6, 0, c.z + 4);
+    this.candleObj?.position.copy(this.candle);
+    this.dice.forEach((d, i) => d.position.set(c.x + 5 + (i % 2) * 0.9, 0.3, c.z + 2 + Math.floor(i / 2) * 0.9));
+  }
+
+  showRoom(): void {
+    if (!this.mapMode) return;
+    this.mapMode = false;
+    this.roomGroup.visible = this.actorsGroup.visible = this.fxGroup.visible = true;
+    this.mapView.group.visible = false;
+    this.roomKey = "";
+  }
+
+  mapScreen(nodeRow: number, nodeCol: number): THREE.Vector2 {
+    const p = MapView.pos({ row: nodeRow, col: nodeCol }).add(this.mapView.group.position);
+    return this.cam.project(p.setY(0.8));
+  }
+
   /** Frame the party: centroid of standing heroes, zoom out to fit up to the cap. */
   frame(s: SimState, padding: number, minH: number, maxH: number, dt: number): void {
     const room = s.room;
@@ -438,7 +472,7 @@ export class GameRenderer {
       d.obj.position.y = d.y + (1 - e) * 6;
       if (d.t >= 1 && !d.dusted) {
         d.dusted = true;
-        if (Math.random() < 0.25) this.vfx.spawn("dust", new THREE.Vector3(d.obj.position.x, 0.1, d.obj.position.z), { scale: 0.6, opacity: 0.8 });
+        if (Math.random() < 0.07) this.vfx.spawn("dust", new THREE.Vector3(d.obj.position.x, 0.1, d.obj.position.z), { scale: 0.6, opacity: 0.8 });
       }
     }
     // Lights: candle, torches, then VFX borrow the rest.

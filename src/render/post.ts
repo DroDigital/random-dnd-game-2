@@ -71,7 +71,9 @@ void main() {
   vec2 uiUv = (vUv - marginUv) / innerUv;
   vec4 u = (enabled > 0.5 && uiUv.x >= 0.0 && uiUv.x <= 1.0 && uiUv.y >= 0.0 && uiUv.y <= 1.0) ? texture2D(tUI, uiUv) : vec4(0.0);
   // Alpha carries the UI mask for the upscale pass (UI must not take the sub-texel shift).
-  gl_FragColor = vec4(mix(c.rgb, u.rgb, u.a), u.a > 0.5 ? 1.0 : 0.0);
+  // Hard alpha threshold keeps pixel-font edges crisp (no half-covered pixels to dither).
+  float a = step(0.5, u.a);
+  gl_FragColor = vec4(mix(c.rgb, u.rgb, a), a);
 }
 `;
 

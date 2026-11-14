@@ -46,6 +46,8 @@ export class Draw {
   }
   font(size: number): void {
     this.g.font = `${Math.round(size * this.scale)}px ${fontFamily}`;
+    // The Ninja Adventure font has a hairline space glyph.
+    (this.g as CanvasRenderingContext2D & { wordSpacing: string }).wordSpacing = fontReady ? `${Math.max(2, Math.round(size / 3))}px` : "0px";
   }
   text(s: string, x: number, y: number, color: string = PAL.bone, size = 8, align: CanvasTextAlign = "left", shadow = true): void {
     const g = this.g;
@@ -91,7 +93,7 @@ export class Draw {
     g.fillRect(x + w - 1, y, 1, h);
   }
   /** Ninja Adventure 9-slice panel, falling back to a flat palette box. */
-  panel(x: number, y: number, w: number, h: number, kind = "t1_nine_path_panel"): void {
+  panel(x: number, y: number, w: number, h: number, kind = "nine_path_4"): void {
     const img = images.get(kind);
     x = Math.round(x); y = Math.round(y); w = Math.round(w); h = Math.round(h);
     if (!img) {
@@ -107,12 +109,30 @@ export class Draw {
     g.drawImage(img, s, 0, sw, s, x + s, y, dw, s);
     g.drawImage(img, s + sw, 0, s, s, x + s + dw, y, s, s);
     g.drawImage(img, 0, s, s, sh, x, y + s, s, dh);
-    g.drawImage(img, s, s, sw, sh, x + s, y + s, dw, dh);
+    // Centre in a flat palette colour so text on it stays readable after quantizing.
+    g.fillStyle = kind === "t1_nine_path_focus" ? PAL.dusk : PAL.night;
+    g.fillRect(x + s, y + s, dw, dh);
     g.drawImage(img, s + sw, s, s, sh, x + s + dw, y + s, s, dh);
     g.drawImage(img, 0, s + sh, s, s, x, y + s + dh, s, s);
     g.drawImage(img, s, s + sh, sw, s, x + s, y + s + dh, dw, s);
     g.drawImage(img, s + sw, s + sh, s, s, x + s + dw, y + s + dh, s, s);
   }
+  /** 50% checkerboard dim (stays crisp through the alpha threshold and palette quantize). */
+  dim(x = 0, y = 0, w = UI_W, h = UI_H): void {
+    if (!this.checker) {
+      const c = document.createElement("canvas");
+      c.width = c.height = 2;
+      const g = c.getContext("2d")!;
+      g.fillStyle = PAL.ink;
+      g.fillRect(0, 0, 1, 1);
+      g.fillRect(1, 1, 1, 1);
+      this.checker = this.g.createPattern(c, "repeat");
+    }
+    this.g.fillStyle = this.checker!;
+    this.g.fillRect(x, y, w, h);
+  }
+  private checker: CanvasPattern | null = null;
+
   bar(x: number, y: number, w: number, h: number, frac: number, color: string, back: string = PAL.ink): void {
     this.rect(x, y, w, h, back);
     this.rect(x, y, Math.max(0, Math.min(1, frac)) * w, h, color);
