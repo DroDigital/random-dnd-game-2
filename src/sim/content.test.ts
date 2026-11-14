@@ -83,5 +83,5 @@ describe("content", () => {
       [3, 4, 5].reduce((t, seed) => t + runHeadless({ seed, persona, mode: "coop", heroes: classes.map((cls, slot) => ({ slot, cls, ctrl: "ai" as const })) }, { maxTicks: 60 * 60 * 10 }).nodes, 0);
     expect(nodes(["barbarian", "ranger", "bard", "paladin"], "storyteller")).toBeGreaterThan(3);
     expect(nodes(["warlock", "druid", "fighter", "cleric"], "chaos")).toBeGreaterThan(3);
-  });
+  }, 60_000); // six whole headless runs: ~6 s on a CI runner
 });
