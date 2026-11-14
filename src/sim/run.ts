@@ -134,6 +134,8 @@ export function enterNode(w: World, nodeId: number): void {
   const s = w.s, run = s.run;
   const node = nodeById(run.map, nodeId);
   run.map.current = nodeId;
+  // Bold choices delight the DM: picking a fight with an Elite, or walking into the unknown.
+  if (node.kind === "elite" || node.kind === "mystery") s.director.delight = Math.min(DIRECTOR.delight.max, s.director.delight + DIRECTOR.delight.boldChoice);
   node.visited = true;
   const revealed = revealFrom(run.map, nodeId);
   void revealed;
@@ -406,6 +408,8 @@ function finishSkill(w: World, optionIdx: number, heroId: number, helperId: numb
   if (r.rerolled) h.inspiration--;
   w.emit({ t: "roll", who: h.name, what: `${opt.skill.replace(/_/g, " ")}${helper ? " (help)" : ""}`, d20: r.d20.rolls, kept: r.d20.natural, total: r.total, vs: opt.dc, vsLabel: "DC", result: r.success ? "success" : "failure", mode: r.d20.mode, x: h.x, z: h.z, slot: h.slot });
   const out = r.success ? opt.success : opt.fail;
+  // Attempting the hardest option on offer is a bold choice.
+  if (opt.dc >= Math.max(...sc.options.map((o) => o.dc))) s.director.delight = Math.min(DIRECTOR.delight.max, s.director.delight + DIRECTOR.delight.boldChoice / 2);
   run.scene = { id: sc.id, result: out.text, chosen: optionIdx };
   if (out.gold) run.gold = Math.max(0, run.gold + out.gold);
   if (out.item) queueLoot(w, randomItem(w));

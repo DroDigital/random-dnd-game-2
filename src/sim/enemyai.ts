@@ -147,7 +147,7 @@ export function enemyAttackRoll(w: World, e: Enemy, a: EnemyAttack, h: Hero, tg:
   const dmg = parseDice(a.damage);
   const r = resolveAttack(w.rng, { bonus: (a.toHit ?? 4) - (tg?.cut ?? 0), ac, damage: { ...dmg, mod: dmg.mod + e.damageBonus }, advantages: adv, disadvantages: dis, extraDice: a.extra ? [parseDice(a.extra)] : [] });
   w.emit({ t: "roll", who: e.name, what: a.name, d20: r.d20.rolls, kept: r.d20.natural, total: r.total, vs: ac, vsLabel: "AC", result: r.outcome, mode: r.d20.mode, damage: r.damage, x: h.x, z: h.z, slot: -1 });
-  let damage = r.damage;
+  let damage = r.outcome === "graze" && w.persona.noGraze ? 0 : r.damage;
   if (tg?.halve) damage = Math.floor(damage / 2);
   if (tg?.thorns) damage = Math.max(0, damage - tg.thorns);
   if (r.crit) {

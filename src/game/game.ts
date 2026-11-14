@@ -180,7 +180,14 @@ export class Game {
     this.audio.playMusic("theme_plain");
   }
 
+  private applyMetaVisuals(): void {
+    const decor = META.unlocks.filter((u) => u.kind === "decor" && this.meta.unlocked.includes(u.id)).map((u) => u.ref);
+    this.renderer.tavernDecor = decor;
+    this.renderer.setDiceSkin(META.dice[this.meta.diceSkin]?.color ?? null);
+  }
+
   private rebuildTavern(): void {
+    this.applyMetaVisuals();
     const old = this.sim?.s;
     const s = createRun({ seed: 1, persona: "storyteller", mode: "coop", heroes: this.players.map((p) => ({ slot: p.slot, cls: p.cls, ctrl: "human" as const })) });
     const sim = new Sim(s);
@@ -227,6 +234,7 @@ export class Game {
     items.push({ label: "Resume saved run", disabled: !this.hasSave, hint: "Continue from the last map you reached." });
     const p1 = this.players[0];
     if (p1) items.push({ label: "P1 class", value: CLASSES[p1.cls]!.name, hint: "Other players change class with Left/Right on their own device." });
+    if (p1) items.push({ label: "P1 background", value: META.backgrounds[p1.background]?.name ?? "Wanderer", hint: "Backgrounds are small perks unlocked with Renown. Other players: Up/Down on their own device." });
     if (this.players.length === 1) items.push({ label: "Solo mode", value: this.mode === "lone" ? "Lone Hero" : "Party (3 AI)", hint: this.mode === "lone" ? "One hero, solo-tuned encounters and an extra death save." : "Three AI companions. D-pad: Up Follow, Right Focus, Down Hold, Left Defensive." });
     items.push({ label: "Dungeon Master", value: DIRECTOR.personas[this.persona].name, hint: DIRECTOR.personas[this.persona].desc + (personaUnlocked(this.meta, this.persona) ? "" : " (locked: buy in the Renown shop)") });
     if (this.persona === "killer") items.push({ label: "Killer tier", value: String(this.killerTier), hint: "Each tier stacks more budget, HP and damage." });
@@ -246,6 +254,7 @@ export class Game {
     for (const p of this.players.slice(1)) {
       const m = this.input.takeMenu(p.device);
       if (m & (MENU.left | MENU.right)) this.cycleClass(p, m & MENU.right ? 1 : -1);
+      if (m & (MENU.up | MENU.down)) this.cycleBackground(p, m & MENU.down ? 1 : -1);
       if (m & MENU.back) {
         this.players = this.players.filter((x) => x !== p);
         this.rebuildTavern();
@@ -262,6 +271,7 @@ export class Game {
     const dir = m & MENU.right ? 1 : m & MENU.left ? -1 : 0;
     if (dir) {
       if (it.label === "P1 class" && p1) this.cycleClass(p1, dir);
+      if (it.label === "P1 background" && p1) this.cycleBackground(p1, dir);
       if (it.label === "Solo mode") this.mode = this.mode === "lone" ? "party" : "lone";
       if (it.label === "Dungeon Master") this.persona = PERSONAS[wrapIndex(PERSONAS.indexOf(this.persona) + dir, PERSONAS.length)]!;
       if (it.label === "Killer tier") this.killerTier = Math.max(1, Math.min(10, this.killerTier + dir));
@@ -278,6 +288,11 @@ export class Game {
       else if (it.label === "Credits & licenses") void this.openCredits();
       else if (it.label === "Quit") void window.rfr?.quit();
     }
+  }
+
+  private cycleBackground(p: Player, dir: number): void {
+    const bgs = unlockedForRun(this.meta).backgrounds;
+    p.background = bgs[wrapIndex(bgs.indexOf(p.background) + dir, bgs.length)]!;
   }
 
   private cycleClass(p: Player, dir: number): void {
@@ -783,6 +798,7 @@ export class Game {
         this.meta.renown -= u.cost;
         this.meta.unlocked.push(u.id);
         if (u.kind === "dice") this.meta.diceSkin = u.ref;
+        this.applyMetaVisuals();
         this.audio.sfx("loot");
         void this.saveMeta();
       } else this.audio.sfx("ui_back");

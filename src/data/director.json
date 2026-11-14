@@ -5,7 +5,7 @@
   "twists": ["ambush", "rival_party", "collapsing_floor"],
   "personas": {
     "storyteller":  { "name": "The Storyteller", "desc": "Easy. Gentle encounters, generous mercy.", "budgetMult": 0.75, "mercyPerAct": 2, "boredomMult": 0.6, "trapChance": 0.0, "lootBonus": 0, "friendlyFire": false, "wildMagic": false, "unlock": 0 },
-    "rules_lawyer": { "name": "The Rules Lawyer", "desc": "Strict. Traps in rooms, but better loot.", "budgetMult": 1.0, "mercyPerAct": 1, "boredomMult": 1.0, "trapChance": 0.5, "lootBonus": 1, "friendlyFire": false, "wildMagic": false, "unlock": 40 },
+    "rules_lawyer": { "name": "The Rules Lawyer", "desc": "Strict: misses never graze. Traps in rooms, but better loot.", "noGraze": true, "budgetMult": 1.0, "mercyPerAct": 1, "boredomMult": 1.0, "trapChance": 0.5, "lootBonus": 1, "friendlyFire": false, "wildMagic": false, "unlock": 40 },
     "chaos":        { "name": "Chaos", "desc": "Wild Magic surges on every spell. Friendly fire is on.", "budgetMult": 1.0, "mercyPerAct": 1, "boredomMult": 1.2, "trapChance": 0.2, "lootBonus": 0, "friendlyFire": true, "wildMagic": true, "wildMagicChance": 0.3, "unlock": 60 },
     "killer":       { "name": "The Killer DM", "desc": "10 stacking difficulty tiers. No mercy.", "budgetMult": 1.15, "mercyPerAct": 0, "boredomMult": 1.4, "trapChance": 0.35, "lootBonus": 1, "friendlyFire": false, "wildMagic": false, "tiers": 10, "tierBudget": 0.12, "tierHp": 0.08, "tierDamage": 1, "unlock": 100 }
   },

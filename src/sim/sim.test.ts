@@ -263,3 +263,54 @@ describe("combat rules in the sim", () => {
     expect(xp(2)).toBeGreaterThanOrEqual(xp(1));
   });
 });
+
+describe("DM Director", () => {
+  it("Boredom builds when the party hangs back, and a twist resets it", () => {
+    const sim = arena(["fighter"], [{ id: "skeleton", x: 18, z: 2 }]);
+    let twist = false;
+    for (let i = 0; i < 60 * 120 && !twist; i++) {
+      const ev = sim.step([]);
+      twist = ev.some((e) => e.t === "narrate" && ["ambush", "rival_party", "collapsing_floor"].includes(e.key));
+    }
+    expect(twist).toBe(true);
+    expect(sim.s.director.boredom).toBeLessThan(20);
+  });
+
+  it("Mercy drops one potion per act when an early party is about to wipe", () => {
+    const sim = arena(["fighter", "wizard"], [{ id: "skeleton", x: 18, z: 2 }]);
+    sim.s.run.persona = "rules_lawyer"; // one mercy per act (the Storyteller gives two)
+    for (const h of sim.s.heroes) h.hp = 1;
+    const potions = (): number => sim.s.heroes.reduce((t, h) => t + h.potions, 0) + sim.s.pickups.filter((p) => p.kind === "potion").length;
+    const before = potions();
+    for (let i = 0; i < 120; i++) sim.step([]);
+    expect(potions()).toBe(before + 1);
+    expect(sim.s.director.mercyUsed).toBe(1);
+    for (let i = 0; i < 240; i++) sim.step([]);
+    expect(sim.s.director.mercyUsed).toBe(1);
+  });
+
+  it("Delight pays out Inspiration", () => {
+    const sim = arena(["fighter"], [{ id: "skeleton", x: 18, z: 2 }]);
+    const f = sim.s.heroes[0]!;
+    f.inspiration = 0;
+    sim.s.director.delight = 55;
+    for (let i = 0; i < 61; i++) sim.step([]);
+    expect(f.inspiration).toBe(1);
+  });
+
+  it("the Rules Lawyer never lets a miss graze", () => {
+    const sim = arena(["fighter"], [{ id: "ogre", x: 7.4, z: 8 }]);
+    sim.s.run.persona = "rules_lawyer";
+    const w = sim.world;
+    const f = sim.s.heroes[0]!, o = sim.s.enemies[0]!;
+    for (let i = 0; i < 60; i++) {
+      const hp = o.hp;
+      const r = w.heroAttack(f, o, { melee: true });
+      if (r?.outcome === "graze") {
+        expect(o.hp).toBe(hp);
+        return;
+      }
+      o.hp = o.maxHp;
+    }
+  });
+});

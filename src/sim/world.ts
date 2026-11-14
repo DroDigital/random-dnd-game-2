@@ -294,7 +294,7 @@ export class World {
     const what = opts.label ?? (sneakApplied ? "Sneak Attack" : c.attack.anim === "cast" ? c.name + " bolt" : "Attack");
     const modeNote = [...ms.advantages, ...ms.disadvantages].join(", ");
     this.emit({ t: "roll", who: h.name, what: modeNote ? `${what} (${modeNote})` : what, d20: res.d20.rolls, kept: res.d20.natural, total: res.total, vs: target.ac, vsLabel: "AC", result: res.outcome, mode: res.d20.mode, damage: res.damage, x: target.x, z: target.z, slot: h.slot });
-    let damage = res.damage;
+    let damage = res.outcome === "graze" && this.persona.noGraze ? 0 : res.damage;
     if (res.crit) {
       damage += h.mods.critDamage;
       h.stats.crits++;

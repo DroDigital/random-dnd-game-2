@@ -66,6 +66,11 @@ export class GameRenderer {
   noShake = false;
   altColors = false;
   roomOrigin = new THREE.Vector3();
+  /** Unlocked tavern decor (prop ids) and dice skin colour, set by the game from the meta save. */
+  tavernDecor: string[] = [];
+  setDiceSkin(color: string | null): void {
+    this.dice.forEach((d, i) => ((d.material as THREE.MeshToonMaterial).color.set(color ?? PLAYER_IDENTITY[i]!.color)));
+  }
   stats = { fps: 0, frameMs: 0, calls: 0, tris: 0 };
   /** Last-sim-step poses for interpolation, captured by the game loop before each step. */
   prev = new Map<number, PrevPose>();
@@ -169,6 +174,14 @@ export class GameRenderer {
         case "skill": place("shelf_small_candles", p); break;
         case "decor": place(act.decor[p.variant % act.decor.length]!, p); break;
       }
+    }
+    if (room.kind === "tavern") {
+      this.tavernDecor.forEach((id, i) => {
+        const o = this.assets.prop(id);
+        o.scale.setScalar(DUNGEON);
+        o.position.set(3 + i * 4, 0, 2.2);
+        this.roomGroup.add(o);
+      });
     }
     // Candle and dice sit on the table just outside the room's near corner.
     this.candle.set(room.w + 1.6, 0, room.h + 0.5);

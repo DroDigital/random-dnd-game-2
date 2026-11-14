@@ -98,7 +98,7 @@ export const ActsSchema = z.object({ acts: z.array(ActSchema).length(4), nodeWei
 
 const Persona = z.object({
   name: z.string(), desc: z.string(), budgetMult: z.number(), mercyPerAct: z.number().int(), boredomMult: z.number(), trapChance: z.number(),
-  lootBonus: z.number(), friendlyFire: z.boolean(), wildMagic: z.boolean(), wildMagicChance: z.number().optional(), tiers: z.number().int().optional(),
+  lootBonus: z.number(), noGraze: z.boolean().optional(), friendlyFire: z.boolean(), wildMagic: z.boolean(), wildMagicChance: z.number().optional(), tiers: z.number().int().optional(),
   tierBudget: z.number().optional(), tierHp: z.number().optional(), tierDamage: z.number().optional(), unlock: z.number(),
 });
 export const DirectorSchema = z.object({
