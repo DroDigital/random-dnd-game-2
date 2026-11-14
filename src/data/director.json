@@ -1,0 +1,33 @@
+{
+  "boredom": { "max": 100, "perSecondIdle": 1.6, "perSecondFarFromEnemies": 0.8, "perSecondSlowFight": 0.5, "slowFightSeconds": 45, "decayOnHit": 4, "twistCooldownSeconds": 40 },
+  "delight": { "max": 100, "nat20": 12, "combo": 15, "boldChoice": 10, "kill": 1, "decayPerSecond": 0.15, "inspirationAt": 50, "mysteryBonusAt": 60 },
+  "mercy": { "hpFraction": 0.25, "maxActIndex": 1, "potion": "potion_greater_healing" },
+  "twists": ["ambush", "rival_party", "collapsing_floor"],
+  "personas": {
+    "storyteller":  { "name": "The Storyteller", "desc": "Easy. Gentle encounters, generous mercy.", "budgetMult": 0.75, "mercyPerAct": 2, "boredomMult": 0.6, "trapChance": 0.0, "lootBonus": 0, "friendlyFire": false, "wildMagic": false, "unlock": 0 },
+    "rules_lawyer": { "name": "The Rules Lawyer", "desc": "Strict: misses never graze. Traps in rooms, but better loot.", "noGraze": true, "budgetMult": 1.0, "mercyPerAct": 1, "boredomMult": 1.0, "trapChance": 0.5, "lootBonus": 1, "friendlyFire": false, "wildMagic": false, "unlock": 40 },
+    "chaos":        { "name": "Chaos", "desc": "Wild Magic surges on every spell. Friendly fire is on.", "budgetMult": 1.0, "mercyPerAct": 1, "boredomMult": 1.2, "trapChance": 0.2, "lootBonus": 0, "friendlyFire": true, "wildMagic": true, "wildMagicChance": 0.3, "unlock": 60 },
+    "killer":       { "name": "The Killer DM", "desc": "10 stacking difficulty tiers. No mercy.", "budgetMult": 1.15, "mercyPerAct": 0, "boredomMult": 1.4, "trapChance": 0.35, "lootBonus": 1, "friendlyFire": false, "wildMagic": false, "tiers": 10, "tierBudget": 0.12, "tierHp": 0.08, "tierDamage": 1, "unlock": 100 }
+  },
+  "wildMagic": ["fireball_self", "heal_all", "lightning", "frost", "grease_everywhere", "summon_rat", "inspire", "haste"],
+  "lines": {
+    "enter_room": ["The torches gutter as you step inside.", "Something skitters in the dark.", "Dust drifts from the ceiling. You are not alone.", "Bones crunch underfoot.", "A cold draft carries whispers."],
+    "nat20": ["A natural twenty! The table erupts.", "Now THAT is a roll.", "Even the dice seem impressed."],
+    "nat1": ["A natural one. The DM tries not to smile.", "Your weapon slips. Oops."],
+    "combo": ["Clever. Very clever.", "Oh, you've done this before."],
+    "boredom": ["The DM drums their fingers on the table...", "This is taking a while. Let's spice it up."],
+    "ambush": ["AMBUSH! Roll for initiative— no, just run!"],
+    "rival_party": ["A rival party bursts in, eyeing your loot!"],
+    "collapsing_floor": ["The floor groans. Then gives way."],
+    "mercy": ["A potion rolls out from behind a crate. Lucky.", "The DM slides a potion across the table."],
+    "boss": ["The air turns to frost. Something ancient wakes."],
+    "initiative": ["Initiative! Everyone, declare your moves."],
+    "downed": ["A hero falls! Roll those death saves."],
+    "victory": ["The last foe falls. Breathe."],
+    "tpk": ["Total party kill. The DM closes the screen softly."],
+    "campfire": ["The campfire crackles. Rest a while."],
+    "merchant": ["\"Wares! Fine wares! Only slightly cursed!\""],
+    "mystery": ["A door with no handle. A chest with no lock. What could go wrong?"],
+    "mimic": ["The chest has TEETH."]
+  }
+}

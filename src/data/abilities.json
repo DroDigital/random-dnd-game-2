@@ -1,0 +1,46 @@
+{
+  "action_surge":     { "name": "Action Surge", "desc": "4 s of double-speed attacks; Bonus refreshes.", "ticks": 240, "attackSpeed": 2.0 },
+  "second_wind":      { "name": "Second Wind", "desc": "Heal 1d10 + level.", "heal": "1d10", "addLevel": true },
+  "parry":            { "name": "Parry", "desc": "Turn aside a telegraphed attack and stagger the attacker.", "staggerTicks": 36 },
+  "shove_every_third":{ "name": "Shoving Blows", "desc": "Every 3rd hit shoves; Strength save or Prone.", "every": 3, "dcBase": 8 },
+
+  "fireball":         { "name": "Fireball", "desc": "Explodes for fire damage, Dex save for half. Uses a spell slot.", "damage": "3d6", "perLevel": { "every": 2, "dice": "1d6" }, "radius": 3.2, "range": 10, "save": "dex", "speed": 12, "slot": true },
+  "grease":           { "name": "Grease", "desc": "Hold Action: slick, flammable ground. Dex save or Prone.", "radius": 2.6, "range": 8, "ticks": 900, "save": "dex" },
+  "misty_step":       { "name": "Misty Step", "desc": "Teleport up to 7 m.", "distance": 7 },
+  "shield":           { "name": "Shield", "desc": "+5 AC against the incoming attack.", "ac": 5, "ticks": 90 },
+  "arcane_recovery":  { "name": "Arcane Recovery", "desc": "Recover spell slots on a short rest.", "slotsBase": 2, "slotsPerTwoLevels": 1 },
+
+  "sneak_strike":     { "name": "Sneak Attack", "desc": "Lunge and strike; with advantage or a flanking ally, add Sneak Attack dice.", "lunge": 2.4, "dicePerTwoLevels": "1d6", "minDice": 1 },
+  "cunning_dash":     { "name": "Cunning Action: Dash", "desc": "Move much faster for 2 s." },
+  "cunning_hide":     { "name": "Cunning Action: Hide", "desc": "Hold Bonus: vanish. Your next attack has advantage.", "requiresNoAdjacent": 2.5 },
+  "uncanny_dodge":    { "name": "Uncanny Dodge", "desc": "Halve the damage of the telegraphed attack." },
+
+  "turn_undead":      { "name": "Turn Undead", "desc": "Undead within range: Wisdom save or Frightened and fleeing.", "radius": 9, "save": "wis", "ticks": 600, "destroyCr": 0.25, "destroyAtLevel": 5 },
+  "healing_word":     { "name": "Healing Word", "desc": "Heal the most wounded ally in range; revives the downed.", "heal": "1d4", "perLevel": { "every": 2, "dice": "1d4" }, "range": 18, "addMod": "wis" },
+  "spiritual_weapon": { "name": "Spiritual Weapon", "desc": "Hold Bonus: a floating weapon fights beside you and flanks.", "ticks": 1800, "damage": "1d8", "attackEvery": 72, "reach": 1.6, "speed": 5.5 },
+  "sanctuary":        { "name": "Sanctuary", "desc": "Ward the targeted ally: attacker makes a Wisdom save or loses the attack.", "save": "wis", "range": 9 },
+
+  "reckless_strike":  { "name": "Reckless Strike", "desc": "A huge swing with advantage; enemies have advantage on you for 4 s.", "ticks": 240, "damageBonus": 4 },
+  "rage":             { "name": "Rage", "desc": "10 s: half damage taken, +2 damage.", "ticks": 600, "damage": 2 },
+  "retaliation":      { "name": "Retaliation", "desc": "Strike the attacker as it winds up." },
+  "danger_sense":     { "name": "Danger Sense", "desc": "Advantage on Dexterity saves." },
+
+  "volley":           { "name": "Volley", "desc": "Rain arrows on an area.", "damage": "2d8", "radius": 3, "range": 14, "save": "dex" },
+  "hunters_mark":     { "name": "Hunter's Mark", "desc": "Mark a foe: your hits deal +1d6.", "ticks": 1800, "dice": "1d6" },
+  "evasive_step":     { "name": "Evasive Step", "desc": "Blink backwards out of the telegraph.", "distance": 4 },
+
+  "thunderwave":      { "name": "Thunderwave", "desc": "Thunder blast around you: Con save or pushed 3 m.", "damage": "2d8", "radius": 3.2, "save": "con", "push": 3 },
+  "bardic_inspiration":{ "name": "Bardic Inspiration", "desc": "Give the nearest ally Inspiration." },
+  "cutting_words":    { "name": "Cutting Words", "desc": "Subtract 1d8 from the telegraphed attack roll.", "dice": "1d8" },
+
+  "divine_smite":     { "name": "Divine Smite", "desc": "Radiant strike, +2d8 (+1d8 vs undead).", "dice": "2d8", "undeadDice": "1d8" },
+  "lay_on_hands":     { "name": "Lay on Hands", "desc": "Heal the nearest ally from a pool of 5 x level.", "poolPerLevel": 5, "heal": 10 },
+  "protection":       { "name": "Protection", "desc": "Impose disadvantage on an attack against an ally near you.", "range": 2.5 },
+
+  "hunger_of_hadar":  { "name": "Hunger of Hadar", "desc": "A sphere of darkness: blinds and chills.", "damage": "2d6", "radius": 3, "range": 10, "ticks": 360 },
+  "hex":              { "name": "Hex", "desc": "Curse a foe: your hits deal +1d6 necrotic.", "ticks": 1800, "dice": "1d6" },
+  "hellish_rebuke":   { "name": "Hellish Rebuke", "desc": "The attacker takes fire damage, Dex save for half.", "damage": "2d10", "save": "dex" },
+
+  "entangle":         { "name": "Entangle", "desc": "Grasping roots: Strength save or Restrained.", "radius": 3, "range": 10, "save": "str", "ticks": 600, "restrainTicks": 180 },
+  "thorn_ward":       { "name": "Thorn Ward", "desc": "Reduce the incoming hit by 1d10 + Wis.", "dice": "1d10" }
+}

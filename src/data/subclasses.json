@@ -1,0 +1,22 @@
+{
+  "champion":     { "class": "fighter", "name": "Champion", "srd": true, "desc": "Improved Critical: crit on 19-20.", "mods": { "critOn": 19 } },
+  "shieldwarden": { "class": "fighter", "name": "Shieldwarden", "desc": "+1 AC; Parry also shoves.", "mods": { "ac": 1, "parryShoves": 1 } },
+  "evoker":       { "class": "wizard", "name": "Evoker", "srd": true, "desc": "Sculpt Spells: allies are unharmed by your area spells; +Int damage.", "mods": { "sculpt": 1, "spellDamageMod": 1 } },
+  "pyromancer":   { "class": "wizard", "name": "Pyromancer", "desc": "Fire bolts ignite grease and +1d6 fire damage on Fireball.", "mods": { "fireballDice": 1, "boltIgnites": 1 } },
+  "thief":        { "class": "rogue", "name": "Thief", "srd": true, "desc": "Fast Hands: drink potions as a Bonus Action; +1 speed.", "mods": { "fastHands": 1, "speed": 0.5 } },
+  "shadowblade":  { "class": "rogue", "name": "Shadowblade", "desc": "Hide lasts longer and your first strike from hiding auto-crits.", "mods": { "hiddenCrit": 1 } },
+  "life":         { "class": "cleric", "name": "Life Domain", "srd": true, "desc": "Disciple of Life: healing +2 + spell level.", "mods": { "healBonus": 3 } },
+  "grave_warden": { "class": "cleric", "name": "Grave Warden", "desc": "Turn Undead also deals 2d8 radiant.", "mods": { "turnDamage": 1 } },
+  "berserker":    { "class": "barbarian", "name": "Path of the Berserker", "srd": true, "desc": "Frenzy: faster attacks while raging.", "mods": { "rageAttackSpeed": 1.4 } },
+  "stormcaller":  { "class": "barbarian", "name": "Stormcaller", "desc": "Raging zaps nearby foes for 1d6 lightning.", "mods": { "rageAura": 1 } },
+  "hunter":       { "class": "ranger", "name": "Hunter", "srd": true, "desc": "Colossus Slayer: +1d8 vs wounded foes.", "mods": { "colossus": 1 } },
+  "beastwarden":  { "class": "ranger", "name": "Beastwarden", "desc": "A wolf companion fights beside you.", "mods": { "wolf": 1 } },
+  "lore":         { "class": "bard", "name": "College of Lore", "srd": true, "desc": "Cutting Words also works on damage.", "mods": { "cuttingDamage": 1 } },
+  "valor":        { "class": "bard", "name": "Valor", "desc": "+2 AC and martial weapons.", "mods": { "ac": 2, "damageDie": 2 } },
+  "devotion":     { "class": "paladin", "name": "Oath of Devotion", "srd": true, "desc": "Sacred Weapon: +Cha to attack rolls.", "mods": { "toHitCha": 1 } },
+  "vengeance":    { "class": "paladin", "name": "Oath of Vengeance", "desc": "Smite marks the target; advantage against it.", "mods": { "vow": 1 } },
+  "fiend_pact":   { "class": "warlock", "name": "Fiend Patron", "srd": true, "desc": "Dark One's Blessing: temp HP on kills.", "mods": { "tempOnKill": 1 } },
+  "hollow_pact":  { "class": "warlock", "name": "Hollow Patron", "desc": "Eldritch blasts chain to a second foe.", "mods": { "chain": 1 } },
+  "land":         { "class": "druid", "name": "Circle of the Land", "srd": true, "desc": "Natural Recovery: Entangle also heals allies inside.", "mods": { "entangleHeals": 1 } },
+  "moon":         { "class": "druid", "name": "Moonsworn", "desc": "+2 AC and claws (1d8) instead of flame.", "mods": { "ac": 2 } }
+}

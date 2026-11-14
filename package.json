@@ -1,0 +1,64 @@
+{
+  "name": "roll-for-ruin",
+  "productName": "Roll for Ruin",
+  "version": "0.1.0",
+  "description": "A tabletop-fantasy action roguelite for 1-4 local co-op players.",
+  "author": "Roll for Ruin contributors",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "dist-electron/electron/main.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build:renderer": "vite build",
+    "build:electron": "tsc -p tsconfig.electron.json && node scripts/write-electron-pkg.mjs",
+    "build": "npm run build:renderer && npm run build:electron",
+    "start": "npm run build && electron .",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.electron.json --noEmit",
+    "lint": "eslint . && npm run typecheck",
+    "test": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "fetch-assets": "tsx scripts/fetch-assets.ts",
+    "build-assets": "tsx scripts/build-assets.ts",
+    "export-vfx": "tsx scripts/export-vfx.ts",
+    "assets": "npm run fetch-assets && npm run build-assets && npm run export-vfx",
+    "balance": "tsx scripts/balance.ts",
+    "dist": "npm run build && electron-builder --publish never",
+    "release": "npm run build && electron-builder --publish always"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@gltf-transform/core": "4.5.1",
+    "@gltf-transform/extensions": "4.5.1",
+    "@gltf-transform/functions": "4.5.1",
+    "@playwright/test": "1.65.0",
+    "@types/node": "24.10.1",
+    "@types/pngjs": "6.0.5",
+    "@types/three": "0.187.0",
+    "@vitest/coverage-v8": "5.1.0",
+    "electron": "45.3.2",
+    "electron-builder": "26.18.0",
+    "eslint": "10.14.0",
+    "globals": "17.14.0",
+    "pngjs": "7.0.0",
+    "tsx": "4.23.15",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.72.2",
+    "vite": "8.3.8",
+    "vitest": "5.1.0"
+  },
+  "dependencies": {
+    "electron-updater": "6.8.11",
+    "three": "0.187.0",
+    "zod": "4.6.7"
+  },
+  "optionalDependencies": {
+    "steamworks.js": "0.4.0"
+  },
+  "desktopName": "roll-for-ruin.desktop",
+  "homepage": "https://github.com/DroDigital/random-dnd-game-2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DroDigital/random-dnd-game-2.git"
+  }
+}

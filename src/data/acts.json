@@ -1,0 +1,23 @@
+{
+  "acts": [
+    { "id": "act1", "name": "Act I: The Hollow Crypt", "setting": "crypt", "boss": "wight", "levels": [1, 3], "rows": 6, "music": "theme_lost_village",
+      "pool": [{ "id": "skeleton", "w": 4 }, { "id": "skeleton_archer", "w": 2 }, { "id": "zombie", "w": 3 }, { "id": "giant_rat", "w": 2 }, { "id": "swarm_of_bats", "w": 2 }, { "id": "kobold", "w": 1 }, { "id": "bone_acolyte", "w": 1 }, { "id": "ghoul", "w": 1 }, { "id": "skeleton_brute", "w": 1 }],
+      "elites": ["ghoul", "skeleton_brute", "shadow"], "bossMinions": ["skeleton", "skeleton_archer"],
+      "floor": "floor_tile_large", "floorAlt": "floor_tile_large_rocks", "wall": "wall", "cover": ["barrel_large", "crates_stacked", "box_large"], "hazard": "floor_tile_big_spikes", "decor": ["candle_triple", "banner_patternA_red", "rubble_half", "sword_shield_broken"] },
+    { "id": "act2", "name": "Act II: The Wildwood", "setting": "wild", "boss": "owlbear", "levels": [3, 5], "rows": 6, "music": "theme_swamp",
+      "pool": [{ "id": "wolf", "w": 4 }, { "id": "goblin", "w": 4 }, { "id": "giant_spider", "w": 2 }, { "id": "bandit", "w": 3 }, { "id": "giant_frog", "w": 2 }, { "id": "dire_wolf", "w": 1 }, { "id": "bugbear", "w": 1 }, { "id": "hobgoblin", "w": 2 }],
+      "elites": ["bugbear", "dire_wolf", "will_o_wisp"], "bossMinions": ["wolf"],
+      "floor": "floor_dirt_large", "floorAlt": "floor_dirt_large_rocky", "wall": "wall_broken", "cover": ["trees_A_medium", "rock_single_A", "trunk_large_A"], "hazard": "floor_tile_big_grate", "decor": ["tent", "barrel", "weaponrack"] },
+    { "id": "act3", "name": "Act III: The Sunken Keep", "setting": "keep", "boss": "young_black_dragon", "levels": [5, 7], "rows": 6, "music": "theme_dream",
+      "pool": [{ "id": "lizardfolk", "w": 4 }, { "id": "crocodile", "w": 2 }, { "id": "hobgoblin", "w": 3 }, { "id": "cultist", "w": 3 }, { "id": "gelatinous_cube", "w": 1 }, { "id": "ogre", "w": 1 }, { "id": "specter", "w": 2 }, { "id": "will_o_wisp", "w": 1 }],
+      "elites": ["ogre", "gelatinous_cube", "wraith"], "bossMinions": ["lizardfolk", "cultist"],
+      "floor": "floor_tile_large", "floorAlt": "floor_tile_small_broken_A", "wall": "wall_cracked", "cover": ["pillar", "crates_stacked", "keg"], "hazard": "floor_tile_big_grate", "decor": ["banner_patternA_red", "bottle_A_green", "rubble_large"] },
+    { "id": "finale", "name": "Finale: The Phylactery Vault", "setting": "vault", "boss": "lich", "levels": [8, 8], "rows": 3, "music": "theme_dream",
+      "pool": [{ "id": "wraith", "w": 2 }, { "id": "specter", "w": 3 }, { "id": "shadow", "w": 3 }, { "id": "skeleton_brute", "w": 3 }, { "id": "bone_acolyte", "w": 3 }],
+      "elites": ["wraith"], "bossMinions": ["skeleton_brute", "bone_acolyte"],
+      "floor": "floor_tile_large", "floorAlt": "floor_tile_big_grate", "wall": "wall_arched", "cover": ["pillar_decorated", "column", "chest_gold"], "hazard": "floor_tile_big_spikes", "decor": ["coin_stack_large", "candle_triple", "shelf_small_candles"] }
+  ],
+  "nodeWeights": { "encounter": 46, "elite": 10, "skill": 12, "merchant": 8, "campfire": 12, "mystery": 12 },
+  "mimicChance": 0.3,
+  "columns": 5
+}
