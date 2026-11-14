@@ -40,8 +40,12 @@ export class Hud {
           this.popups.push({ text: "", color: resColor, x: p.x, y: p.y, t: 0, life: 1.1, big: e.result === "crit", d20: e.kept, dmg: e.damage, mode: e.mode });
         }
       } else if (e.t === "popup") {
+        // Drop duplicates and stack nearby text so a busy fight stays readable.
+        if (this.popups.some((q) => q.text === e.text && q.t < 0.4)) continue;
         const p = e.x === 0 && e.z === 0 ? { x: UI_W / 2, y: 70 } : r.toScreen(e.x, 2.6, e.z);
-        this.popups.push({ text: e.text, color: e.color, x: p.x, y: p.y, t: 0, life: e.big ? 1.6 : 1.1, big: !!e.big });
+        const near = this.popups.filter((q) => q.text && Math.abs(q.x - p.x) < 60 && Math.abs(q.y - p.y) < 14 && q.t < 0.6).length;
+        const big = !!e.big && !this.popups.some((q) => q.big && q.text && q.t < 0.8);
+        this.popups.push({ text: e.text, color: e.color, x: p.x, y: p.y - near * 10, t: 0, life: big ? 1.4 : 1.0, big });
       } else if (e.t === "damage" && e.amount > 0) {
         const p = r.toScreen(e.x, 1.8, e.z);
         this.popups.push({ text: `${e.amount}`, color: e.crit ? PAL.gold : e.graze ? PAL.fog : e.type === "fire" ? PAL.ember : PAL.blood, x: p.x + 8, y: p.y, t: 0, life: 0.9, big: e.crit });

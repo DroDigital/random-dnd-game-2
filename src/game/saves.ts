@@ -74,8 +74,9 @@ const RunSaveSchema = z.object({ version: z.literal(RUN_SAVE_VERSION), savedAt: 
 export function parseRunSave(json: string | null): RunSave | null {
   if (!json) return null;
   try {
-    const r = RunSaveSchema.safeParse(JSON.parse(json));
-    return r.success ? (r.data as unknown as RunSave) : null;
+    const raw: unknown = JSON.parse(json);
+    // Validate the shape, but keep the original object: zod would rebuild it with reordered keys.
+    return RunSaveSchema.safeParse(raw).success ? (raw as RunSave) : null;
   } catch {
     return null;
   }

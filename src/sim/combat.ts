@@ -428,7 +428,7 @@ export function startInitiativeBreak(w: World, bossId: number, legendary: string
   w.s.init = { bossId, phase: "plan", planT: BALANCE.initiativeBreak.planTicks, order, plans, turn: 0, turnT: 0, legendary };
   w.emit({ t: "initiative", on: true });
   w.narrate("initiative");
-  if (boss) w.popup("INITIATIVE!", "#e8cf4a", boss.x, boss.z, true);
+  void boss;
 }
 
 /** Planning: each player steers a cursor up to 6 tiles and picks an action; then turns resolve in order. */

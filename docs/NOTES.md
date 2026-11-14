@@ -45,3 +45,22 @@ Running log of decisions, findings and gotchas. Newest last.
 - `docs/look-*.png` come from `tests/e2e/look.spec.ts` (Electron, `--look=on|off|fireball`).
 - Headless Chromium for dev screenshots: `/opt/pw-browsers/chromium-1243/chrome-linux64/chrome` with
   SwiftShader; WebGL2 works.
+
+## Steps 3–4 — co-op play and Act I
+
+- **Inputs are per-tick frames**: devices accumulate presses/releases between sim ticks so a tap
+  shorter than 16 ms is never lost. Menus read separate "menu edge" bits; `peekMenu` exists so the
+  pause check doesn't eat other screens' input, and opening a menu flushes the press that opened it.
+- **Screen-relative movement**: the stick's (right, up) maps to world `(x, z) = (r−u, −r−u)/√2` for the
+  45° yaw camera.
+- **The Ninja Adventure font** is crisp at 8/16 px but its space glyph is a hairline, so the UI sets
+  canvas `wordSpacing`. The UI layer is composited with a hard alpha threshold (no half-covered
+  pixels to dither) and dims with a 50% checkerboard instead of translucent fills.
+- **Save files keep the raw JSON**: zod `.passthrough()` rebuilds objects with re-ordered keys, which
+  changed the state hash after a load. The save is validated, then the original object is used.
+- **Shared camera leash** lives in the sim (deterministic): heroes can't spread further than the
+  zoom cap's view, measured in screen axes.
+- **Hold vs tap**: Action/Bonus fire on release; holding for 0.4 s fires the alternate (Grease,
+  Cunning Hide, Spiritual Weapon). Interact is hold-to-stabilize (or toggle in accessibility).
+- Autoplay demo: `?demo=4&seed=5&speed=6` (or `--demo=4 --seed=5 --speed=6` in Electron) runs an
+  all-AI party with the full UI; used by e2e tests and for screenshots.

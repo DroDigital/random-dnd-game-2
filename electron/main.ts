@@ -101,7 +101,7 @@ function harden(win: BrowserWindow, kind: string): void {
 function pageQuery(): Record<string, string> {
   const q: Record<string, string> = {};
   for (const a of argv) {
-    const m = /^--(look|demo|seed)=(.+)$/.exec(a);
+    const m = /^--(look|demo|seed|speed)=(.+)$/.exec(a);
     if (m) q[m[1]!] = m[2]!;
   }
   if (process.env.RFR_LOOK) q.look = process.env.RFR_LOOK;

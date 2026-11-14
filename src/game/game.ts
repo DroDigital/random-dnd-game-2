@@ -26,7 +26,7 @@ declare global {
 const STEP = 1 / 60;
 const PERSONAS = ["storyteller", "rules_lawyer", "chaos", "killer"] as const;
 
-export interface GameOptions { look: string | null; demo?: string | null; seed?: string | null }
+export interface GameOptions { look: string | null; demo?: string | null; seed?: string | null; speed?: string | null }
 
 interface Player { slot: number; device: DeviceId; cls: string; background: string }
 type Screen = "tavern" | "run" | "summary" | "shop" | "hall" | "credits";
@@ -753,10 +753,12 @@ export class Game {
 
   private tickSim(dt: number, cmds: Command[]): void {
     if (!this.sim) return;
-    this.acc += dt * this.settings.accessibility.combatSpeed;
+    const speed = this.demo ? Math.max(1, Number(this.opts.speed ?? 1)) : 1;
+    const maxSteps = 8 * speed;
+    this.acc += dt * this.settings.accessibility.combatSpeed * speed;
     let first = true;
     let steps = 0;
-    while (this.acc >= STEP && steps < 8) {
+    while (this.acc >= STEP && steps < maxSteps) {
       const inputs = this.screen === "run" || this.screen === "tavern" ? this.gatherInputs() : [];
       const extra = this.demo && this.sim.s.tick % 30 === 0 ? botCommandsLazy(this.sim.s) : [];
       this.stepSim(inputs, first ? [...cmds, ...extra] : extra);
@@ -764,7 +766,7 @@ export class Game {
       this.acc -= STEP;
       steps++;
     }
-    if (steps >= 8) this.acc = 0;
+    if (steps >= maxSteps) this.acc = 0;
     if (first && cmds.length) this.stepSim([], cmds); // menus must not wait for the next tick
   }
 
