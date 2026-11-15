@@ -99,6 +99,12 @@ jobs:
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
+          # A missing secret still arrives as an empty variable. electron-builder skips signing on
+          # pull requests, but on a push it reads CSC_LINK="" as a path (the repo dir) and fails with
+          # "not a file". Unset empty signing variables so unsigned builds stay unsigned everywhere.
+          for v in CSC_LINK CSC_KEY_PASSWORD WIN_CSC_LINK WIN_CSC_KEY_PASSWORD APPLE_ID APPLE_APP_SPECIFIC_PASSWORD APPLE_TEAM_ID; do
+            if [ -z "${!v}" ]; then unset "$v"; fi
+          done
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then publish=always; else publish=never; fi
           npx electron-builder --publish "$publish" ${{ steps.sign.outputs.extra }}
 
