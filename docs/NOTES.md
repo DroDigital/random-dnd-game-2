@@ -100,3 +100,15 @@ Running log of decisions, findings and gotchas. Newest last.
   heroes never drank potions (solo win rate 28% → 53% once fixed); ranged AI kept trying to back away
   into walls instead of casting; the mid-act level-up now also happens halfway up the map, so short
   Act I paths don't reach the Wight at level 1.
+
+## UI text resolution
+
+The 3D scene renders at 480x270 and is integer-upscaled, but the UI canvas is drawn at the same
+integer scale as the upscale (480k x 270k, `Draw.setResolution`) and composited in the final
+upscale pass, one UI texel per screen pixel. Drawing it at 480x270 made the 8 px font antialias,
+then the hard alpha threshold broke glyphs apart, and the upscale magnified the damage.
+All UI code still works in 480x270 units through the canvas transform.
+
+The Ninja Adventure font sits on a 9 px em (2048 units/em, 227.5 units per font pixel), so
+`Draw.font()` renders nominal 8/16 at 9/18 px. At 8 px each font pixel covers 8/9 of a screen
+pixel and rows/columns drop out (the "i" lost its stem).

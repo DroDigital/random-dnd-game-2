@@ -131,8 +131,13 @@ export class Game {
     const c = this.loadCanvas;
     const g = c.getContext("2d");
     if (!g) return;
-    c.width = 480;
-    c.height = 270;
+    // Same integer scale as the game frame, so the title text is rasterized sharp, not stretched.
+    const k = Math.max(1, Math.floor(Math.min((innerWidth * devicePixelRatio) / 480, (innerHeight * devicePixelRatio) / 270)));
+    if (c.width !== 480 * k) {
+      c.width = 480 * k;
+      c.height = 270 * k;
+    }
+    g.setTransform(k, 0, 0, k, 0, 0);
     g.fillStyle = PAL.ink;
     g.fillRect(0, 0, 480, 270);
     g.fillStyle = PAL.dusk;
@@ -797,6 +802,9 @@ export class Game {
       }
     }
     this.hud.update(this.paused ? 0 : dt);
+    // Draw the UI at the same integer scale the frame is upscaled by, so text is rasterized at
+    // screen resolution instead of being blown up from 480x270.
+    if (this.ui.setResolution(Math.floor(Math.min(W / UI_W, H / UI_H)))) this.renderer.post.uiTexture.dispose();
     this.drawUi();
     this.renderer.render(W, H, dt, true);
     requestAnimationFrame((t) => this.frame(t));
@@ -935,7 +943,7 @@ export class Game {
   private drawTavern(): void {
     const d = this.ui;
     const large = this.settings.accessibility.largeText;
-    const mw = large ? 226 : 190, my = large ? 22 : 60;
+    const mw = large ? 226 : 204, my = large ? 22 : 60;
     const sx0 = mw + 18, sw = Math.floor((UI_W - 8 - sx0 - 9) / 4), sy = 172;
     // Controls strip along the bottom, on its own plate (drawn first: the large-text menu may cover it).
     d.rect(0, 237, UI_W, UI_H - 237, PAL.ink);
@@ -956,7 +964,7 @@ export class Game {
     d.label(`Renown ${this.meta.renown}   Runs ${this.meta.stats.runs}   Wins ${this.meta.stats.wins}`, UI_W - 4, 4, PAL.gold, 8, "right");
     drawMenu(d, 8, my, mw, "The Tavern", this.tavernItems(), this.tavernSel, large ? 12 : 8);
     // Party slots.
-    if (!this.input.hasPads()) d.label("Controllers appear after their first button press.", UI_W - 8, sy - 12, PAL.fog, 8, "right", UI_W - sx0);
+    if (!this.input.hasPads()) d.label("Gamepads show up after one button press.", UI_W - 8, sy - 12, PAL.fog, 8, "right", UI_W - sx0);
     for (let i = 0; i < 4; i++) {
       const p = this.players.find((x) => x.slot === i);
       const x = sx0 + i * (sw + 3);
@@ -967,8 +975,8 @@ export class Game {
       const inner = sw - 12;
       if (p) {
         d.text(d.fit(CLASSES[p.cls]!.name, inner), x + 6, sy + 19, PAL.bone, 8);
-        d.text(d.fit(p.device.startsWith("pad") ? "Controller" : p.device === "kbA" ? "WASD keys" : "Arrow keys", inner), x + 6, sy + 30, PAL.fog, 8);
-        if (i > 0) d.text(d.fit("◀ ▶ class", inner), x + 6, sy + 42, PAL.mist, 8);
+        d.text(d.fit(p.device.startsWith("pad") ? "Gamepad" : p.device === "kbA" ? "WASD" : "Arrows", inner), x + 6, sy + 30, PAL.fog, 8);
+        if (i > 0) d.text(d.width("◀ ▶ class") <= inner ? "◀ ▶ class" : "◀ ▶ swap", x + 6, sy + 42, PAL.mist, 8);
       } else {
         d.text("Open seat", x + 6, sy + 19, PAL.mist, 8);
         d.text(d.fit("Press to", inner), x + 6, sy + 31, PAL.fog, 8);
@@ -1090,8 +1098,8 @@ export class Game {
         const name = cards ? CARDS.cards.find((c) => c.id === id)!.name : SUBCLASSES[id]!.name;
         const desc = cards ? CARDS.cards.find((c) => c.id === id)!.desc : SUBCLASSES[id]!.desc;
         d.panel(x, y, 125, ch, i === sel ? "t1_nine_path_focus" : "nine_path_4");
-        d.text(d.fit(name, 113), x + 6, y + 6, i === sel ? PAL.gold : PAL.bone, 8);
-        d.para(desc, x + 6, y + 18, 113, i === sel ? PAL.bone : PAL.fog, 8, Math.max(1, Math.floor((ch - 24) / 10)), 10);
+        d.text(d.fit(name, 113), x + 6, y + 4, i === sel ? PAL.gold : PAL.bone, 8);
+        d.para(desc, x + 6, y + 15, 113, i === sel ? PAL.bone : PAL.fog, 8, Math.max(1, Math.floor((ch - 21) / 10)), 10);
       });
     });
   }
@@ -1155,7 +1163,7 @@ export class Game {
     const vy = 84 + desc.length * 10 + 8;
     d.panel(90, 46, 300, vy + 36 - 46);
     d.text(d.fit(it.name, 284), 240, 54, PAL.gold, 8, "center");
-    d.text(`${it.rarity.replace("_", " ")}${it.attune ? " — requires attunement" : ""}`, 240, 66, PAL.fog, 8, "center");
+    d.text(`${it.rarity.replace("_", " ")}${it.attune ? " — requires attunement" : ""} · ties: d20 roll-off`, 240, 66, PAL.fog, 8, "center");
     desc.forEach((ln, i) => d.text(ln, 240, 80 + i * 10, PAL.bone, 8, "center", false));
     const voters = s.heroes.filter((h) => !h.fallen);
     const vx0 = 240 - (voters.length * 60) / 2;
@@ -1164,7 +1172,7 @@ export class Game {
       d.shape(PLAYER_IDENTITY[h.slot]!.shape, vx0 + 14 + i * 60, vy + 4, 4, this.hud.idColor(h.slot));
       d.text(v ? v.toUpperCase() : "…", vx0 + 22 + i * 60, vy, v === "need" ? PAL.gold : v === "greed" ? PAL.sky : PAL.fog, 8);
     });
-    d.text(d.fit("Need: Attack   Greed: Action   Pass: Dodge   (d20 roll-off)", 284), 240, vy + 16, PAL.fog, 8, "center", false);
+    d.text(d.fit("Need: Attack   Greed: Action   Pass: Dodge", 284), 240, vy + 16, PAL.fog, 8, "center", false);
   }
 
   private drawInitiative(s: SimState): void {
@@ -1189,14 +1197,14 @@ export class Game {
     const start = n <= max ? 0 : Math.max(0, Math.min(n - max, init.turn - Math.floor(max / 2)));
     const shown = init.order.slice(start, start + max);
     const more = n > max;
-    d.panel(4, 72, 100, 18 + shown.length * 10 + (more ? 10 : 0));
+    d.panel(4, 72, 112, 20 + shown.length * 10 + (more ? 12 : 0));
     d.text("Order", 12, 78, PAL.amber, 8);
     shown.forEach((o, k) => {
       const i = start + k;
       const a = s.heroes.find((h) => h.id === o.id) ?? s.enemies.find((e) => e.id === o.id);
       if (!a) return;
       const isHero = (a as Hero).kind === "hero";
-      d.text(d.fit(`${o.total} ${a.name}`, 84), 12, 90 + k * 10, i === init.turn && init.phase === "resolve" ? PAL.gold : isHero ? this.hud.idColor((a as Hero).slot) : PAL.fog, 8, "left", false);
+      d.text(d.fit(`${o.total} ${a.name}`, 96), 12, 90 + k * 10, i === init.turn && init.phase === "resolve" ? PAL.gold : isHero ? this.hud.idColor((a as Hero).slot) : PAL.fog, 8, "left", false);
     });
     if (more) d.text(`${start + shown.length}/${n}`, 12, 90 + shown.length * 10, PAL.mist, 8, "left", false);
   }
@@ -1205,13 +1213,13 @@ export class Game {
     const d = this.ui;
     const sm = this.summary;
     if (!sm) return;
-    d.panel(60, 30, 360, 210);
-    d.text(d.fit(sm.victory ? "VICTORY! The Lich is undone." : "DEFEAT. The DM closes the screen.", 340, 16), 240, 40, sm.victory ? PAL.gold : PAL.blood, 16, "center");
+    d.panel(30, 30, 420, 210);
+    d.text(d.fit(sm.victory ? "VICTORY! The Lich is undone." : "DEFEAT. The DM closes the screen.", 400, 16), 240, 40, sm.victory ? PAL.gold : PAL.blood, 16, "center");
     let y = 66;
     for (const l of sm.lines) {
-      const lines = d.wrap(l, 336, 8);
+      const lines = d.wrap(l, 392, 8);
       if (y + lines.length * 11 > 214) break;
-      lines.forEach((ln, k) => d.text(ln, 72 + (k ? 8 : 0), y + k * 11, PAL.bone, 8, "left", false));
+      lines.forEach((ln, k) => d.text(ln, 42 + (k ? 8 : 0), y + k * 11, PAL.bone, 8, "left", false));
       y += lines.length * 11 + 2;
     }
     d.text("A / Enter: back to the tavern", 240, 222, PAL.fog, 8, "center");

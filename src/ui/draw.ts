@@ -35,17 +35,44 @@ export const uiImage = (n: string): HTMLImageElement | undefined => images.get(n
 export class Draw {
   readonly g: CanvasRenderingContext2D;
   scale = 1;
+  /** Backing-store pixels per UI unit: the UI is drawn at the final screen resolution. */
+  res = 1;
   constructor(readonly canvas: HTMLCanvasElement) {
     canvas.width = UI_W;
     canvas.height = UI_H;
     this.g = canvas.getContext("2d", { willReadFrequently: false })!;
     this.g.imageSmoothingEnabled = false;
   }
+  /**
+   * Match the canvas to the integer upscale factor so text and panels are rasterized at full
+   * screen resolution (crisp glyphs) while every draw call keeps using 480x270 UI units.
+   */
+  setResolution(k: number): boolean {
+    k = Math.max(1, Math.min(8, Math.floor(k)));
+    let changed = false;
+    if (k !== this.res || this.canvas.width !== UI_W * k) {
+      changed = true;
+      this.res = k;
+      this.canvas.width = UI_W * k;
+      this.canvas.height = UI_H * k;
+      this.checker = null;
+    }
+    this.g.setTransform(k, 0, 0, k, 0, 0);
+    this.g.imageSmoothingEnabled = false;
+    return changed;
+  }
   clear(): void {
-    this.g.clearRect(0, 0, UI_W, UI_H);
+    this.g.save();
+    this.g.setTransform(1, 0, 0, 1, 0, 0);
+    this.g.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.g.restore();
   }
   font(size: number): void {
-    this.g.font = `${Math.round(size * this.scale)}px ${fontFamily}`;
+    // The Ninja Adventure font is drawn on a 9 px em (one font pixel = 227.5 of 2048 units), so
+    // nominal sizes 8/16 render at 9/18 px: every font pixel then covers a whole number of screen
+    // pixels. At 8 px glyph pixels land on fractional positions and rows/columns drop out.
+    const px = fontReady ? (size * this.scale * 9) / 8 : Math.round(size * this.scale);
+    this.g.font = `${px}px ${fontFamily}`;
     // The Ninja Adventure font has a hairline space glyph.
     (this.g as CanvasRenderingContext2D & { wordSpacing: string }).wordSpacing = fontReady ? `${Math.max(2, Math.round(size / 3))}px` : "0px";
   }

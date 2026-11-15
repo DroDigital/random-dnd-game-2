@@ -109,15 +109,20 @@ void main() {
 `;
 
 const upFrag = /* glsl */ `
-uniform sampler2D tColor; uniform vec2 outSize; uniform vec2 origin; uniform float scale; uniform vec2 shift; uniform vec2 rtSize; uniform float margin; uniform vec3 letterbox;
+uniform sampler2D tColor; uniform sampler2D tUI; uniform float uiOn; uniform vec2 outSize; uniform vec2 origin; uniform float scale; uniform vec2 shift; uniform vec2 rtSize; uniform float margin; uniform vec3 letterbox;
 varying vec2 vUv;
 vec4 at(vec2 lowPx) { return texture2D(tColor, (floor(lowPx) + margin + 0.5) / rtSize); }
 void main() {
   vec2 p = vUv * outSize - origin;              // output pixels inside the game rect, y up
   vec2 low = vec2(480.0, 270.0);
   if (p.x < 0.0 || p.y < 0.0 || p.x >= low.x * scale || p.y >= low.y * scale) { gl_FragColor = vec4(letterbox, 1.0); return; }
+  // The UI is drawn at full output resolution (one UI texel per screen pixel), so text stays sharp.
+  if (uiOn > 0.5) {
+    vec4 u = texture2D(tUI, (floor(p) + 0.5) / (low * scale));
+    if (u.a > 0.5) { gl_FragColor = vec4(u.rgb, 1.0); return; }
+  }
   vec4 plain = at(p / scale);
-  if (plain.a > 0.5) { gl_FragColor = vec4(plain.rgb, 1.0); return; } // UI: no shift
+  if (plain.a > 0.5) { gl_FragColor = vec4(plain.rgb, 1.0); return; } // low-res UI layer: no shift
   vec4 shifted = at((p + shift) / scale);
   gl_FragColor = vec4(shifted.a > 0.5 ? plain.rgb : shifted.rgb, 1.0);
 }
@@ -181,7 +186,7 @@ export class PostChain {
     this.mQuant = new THREE.ShaderMaterial({ vertexShader: fsVert, fragmentShader: quantFrag, uniforms: {
       tColor: { value: null }, palette: { value: pal }, enabled: { value: 1 }, dither: { value: 1 }, res: { value: new THREE.Vector2(RT_W, RT_H) } } });
     this.mUp = new THREE.ShaderMaterial({ vertexShader: fsVert, fragmentShader: upFrag, uniforms: {
-      tColor: { value: null }, outSize: { value: new THREE.Vector2(1, 1) }, origin: { value: new THREE.Vector2() },
+      tColor: { value: null }, tUI: { value: this.uiTexture }, uiOn: { value: 1 }, outSize: { value: new THREE.Vector2(1, 1) }, origin: { value: new THREE.Vector2() },
       scale: { value: 1 }, shift: { value: new THREE.Vector2() }, rtSize: { value: new THREE.Vector2(RT_W, RT_H) },
       margin: { value: MARGIN }, letterbox: { value: ink } } });
     this.quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), this.mOutline);
@@ -240,7 +245,8 @@ export class PostChain {
     this.mTilt.uniforms.focusY!.value = this.tiltFocusY;
     this.pass(r, this.mTilt, this.rtA.texture, this.rtB);
     if (uiDirty) this.uiTexture.needsUpdate = true;
-    this.mUI.uniforms.enabled!.value = t.ui ? 1 : 0;
+    // The low-res pass now only writes the "no UI here" mask; the UI itself joins at full resolution.
+    this.mUI.uniforms.enabled!.value = 0;
     this.pass(r, this.mUI, this.rtB.texture, this.rtA);
     this.mQuant.uniforms.enabled!.value = t.quantize ? 1 : 0;
     this.mQuant.uniforms.dither!.value = t.dither ? 1 : 0;
@@ -252,6 +258,7 @@ export class PostChain {
     (u.outSize!.value as THREE.Vector2).set(outW, outH);
     (u.origin!.value as THREE.Vector2).set(ox, oy);
     u.scale!.value = scale;
+    u.uiOn!.value = t.ui ? 1 : 0;
     // Remainder is in texels (right, up); convert to whole output pixels.
     (u.shift!.value as THREE.Vector2).set(Math.round(remainder.x * scale), Math.round(remainder.y * scale));
     r.setViewport(0, 0, outW, outH);

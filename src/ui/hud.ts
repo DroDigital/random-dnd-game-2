@@ -90,7 +90,7 @@ export class Hud {
     const n = this.narr;
     if (!n.text) return null;
     const size = this.largeText ? 16 : 8;
-    const lines = this.d.wrap(n.text, 284, size);
+    const lines = this.d.wrap(n.text, 266, size);
     return { lines, size, h: 12 + lines.length * (size + 3) };
   }
 
