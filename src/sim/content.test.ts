@@ -75,7 +75,7 @@ describe("content", () => {
     const r = runHeadless({ seed: 8, persona: "storyteller", mode: "coop", heroes: ["fighter", "wizard", "rogue", "cleric"].map((cls, slot) => ({ slot, cls, ctrl: "ai" as const })) });
     expect(r.ttk.map((t) => t.boss)).toEqual(ACTS.acts.map((a) => a.boss).slice(0, r.ttk.length));
     expect(r.act).toBeGreaterThanOrEqual(1);
-  });
+  }, 60_000); // one whole headless run: 5.2 s on the Windows runner, past Vitest's 5 s default
 
   it("unlockable classes can finish rooms in a full party", () => {
     // Across a few seeds, parties built from the unlockable classes clear rooms (not a difficulty check).
